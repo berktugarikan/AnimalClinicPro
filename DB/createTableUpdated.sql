@@ -1,4 +1,10 @@
-CREATE TABLE Permissions (
+DROP DATABASE IF EXISTS veterinary_clinic;
+CREATE DATABASE veterinary_clinic;
+USE veterinary_clinic;
+
+
+
+CREATE TABLE Permissions(
     ID INT PRIMARY KEY AUTO_INCREMENT,
     Permission_Name VARCHAR(255) UNIQUE NOT NULL
 );
