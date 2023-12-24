@@ -1,10 +1,14 @@
 package com.example.AnimalClinicPro.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
 import java.sql.Date;
-
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "Animals")
 @Data

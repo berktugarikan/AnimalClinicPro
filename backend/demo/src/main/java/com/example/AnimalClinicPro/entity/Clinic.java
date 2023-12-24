@@ -1,7 +1,12 @@
 package com.example.AnimalClinicPro.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import jakarta.persistence.*;
+import lombok.NoArgsConstructor;
+
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "Clinics")
 @Data

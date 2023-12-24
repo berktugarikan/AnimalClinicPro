@@ -1,35 +1,40 @@
 package com.example.AnimalClinicPro.entity;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-@Entity
-@Table(name = "Users")
-@Data
-public class User {
+import lombok.NoArgsConstructor;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Entity
+    @Table(name = "Users")
+    @Data
+    public class User {
 
-    @Column(name = "Name", nullable = false)
-    private String firstname;
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long id;
 
-    @Column(name = "Surname", nullable = false)
-    private String surname;
+        @Column(name = "Name", nullable = false)
+        private String firstname;
 
-    @Column(name = "Username", unique = true, nullable = false)
-    private String username;
+        @Column(name = "Surname", nullable = false)
+        private String surname;
 
-    @Column(name = "Password", nullable = false)
-    private String password;
+        @Column(name = "Username", unique = true, nullable = false)
+        private String username;
 
-    @Column(name = "Email", unique = true, nullable = false)
-    private String email;
+        @Column(name = "Password", nullable = false)
+        private String password;
 
-    @Column(name = "Phone_Number", unique = true, nullable = false)
-    private String phoneNumber;
+        @Column(name = "Email", unique = true, nullable = false)
+        private String email;
 
-    @ManyToOne
-    @JoinColumn(name = "Authorization_ID", referencedColumnName = "ID")
-    private Permission permission;
+        @Column(name = "Phone_Number", unique = true, nullable = false)
+        private String phoneNumber;
+
+        @ManyToOne
+        @JoinColumn(name = "Authorization_ID", referencedColumnName = "ID")
+        private Permission permission;
 
 }
