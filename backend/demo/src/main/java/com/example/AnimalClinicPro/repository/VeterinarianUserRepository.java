@@ -6,9 +6,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface VeterinarianUserRepository extends JpaRepository<VeterinarianUser,Long> {
-    VeterinarianUser findByUserName(String username);
-    VeterinarianUser findByEmail(String email);
-    VeterinarianUser findByPhoneNumber(String phoneNumber);
-    VeterinarianUser findByVeterinarianUserId(Long id);
-    VeterinarianUser findByName(String name);
+    VeterinarianUser findByUser_username(String username);
+    VeterinarianUser findByUser_email(String email);
+    VeterinarianUser findByUser_phoneNumber(String phoneNumber);
+    VeterinarianUser findByUser_id(Long id);
+    VeterinarianUser findByUser_firstname(String name);
 }
