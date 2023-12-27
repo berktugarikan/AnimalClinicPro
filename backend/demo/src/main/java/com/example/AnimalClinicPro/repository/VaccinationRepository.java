@@ -14,11 +14,9 @@ public interface VaccinationRepository extends JpaRepository<Vaccination,Long> {
 
     List<Vaccination> findVaccinationByAnimalId(Long animalId);// Belirli bir hayvanın aşı geçmişini getirir.
 
-    List<Vaccination> findVaccinationByVeterinarianId(Long veterinarianId);// Belirli bir veterinerin yaptığı aşıları getirir.
+    List<Vaccination> findVaccinationByVeterinarianIdAndVaccinationStatus(Long veterinarianId, Vaccination.VaccinationStatus status);// Belirli bir veterinerin belirli durumdki aşıları getirir.
 
-    List<Vaccination> findVaccinationByCustomerIdAndVaccinationDateBetween(Long customerId, Date startDate, Date endDate);// Belirli bir müşterinin belirli bir tarih aralığındaki aşıları getirir.
+    List<Vaccination> findVaccinationByCustomerIdAndVaccinationStatus(Long customerId, Vaccination.VaccinationStatus status);// Belirli bir müşterinin belirli durumdaki aşıları getirir.
 
 
-    @Query("SELECT v FROM Vaccination v WHERE v.veterinarianId = :veterinarianId AND v.vaccinationStatus = 'PENDING'")
-    List<Vaccination> findVeterinarianPendingVaccinations(@Param("veterinarianId") Long veterinarianId);// Belirli bir veterinerin yapacağı aşıları getirir.
 }
