@@ -2,7 +2,9 @@ package com.example.AnimalClinicPro.repository;
 
 import com.example.AnimalClinicPro.entity.VeterinarianUser;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface VeterinarianUserRepository extends JpaRepository<VeterinarianUser,Long> {
     VeterinarianUser findByUserName(String username);
     VeterinarianUser findByEmail(String email);
