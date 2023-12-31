@@ -1,0 +1,67 @@
+/* VetMainPage.css */
+
+.main-container {
+  display: flex;
+}
+
+.left-menu {
+  width: 250px; /* Sol menünün genişliği */
+  padding: 20px;
+  border-right: 1px solid #ddd;
+  text-decoration: none;
+}
+
+.menu-box {
+  background-color: #c3dfd6;
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+ 
+}
+
+.menu-box a{
+  text-decoration:none;
+}
+
+.right-content {
+  flex: 1; /* Sağ sütunun genişliği */
+  padding: 20px;
+
+}
+
+.right-content h1{
+  color:#6c9286;
+}
+
+.customer-card {
+  border: 1px solid #ddd;
+  padding: 15px;
+  margin: 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #c3dfd6;
+}
+
+.customer-card h2 {
+  margin-bottom: 8px;
+}
+
+.customer-card p {
+  color: #555;
+}
+
+.custom-btn {
+	background-color: #6c9286; /* İstediğiniz rengi burada belirtin */
+	color: #c3dfd6 ; /* İstediğiniz metin rengini burada belirtin */
+	/* Diğer özel stillendirmeleri buraya ekleyebilirsiniz */
+  }
+
+  .card-footer{
+    background: 'white';
+    }
+
+    .list-group{
+      background-color: #c3dfd6;
+    }
+  
