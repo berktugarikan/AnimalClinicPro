@@ -26,4 +26,5 @@ public interface AppointmentRepository extends JpaRepository<Appointment,Long> {
             "AND a.appointmentDate = :appointmentDate " +
             "AND a.status = 'PENDING'")
     List<Time> findAvailableAppointmentTimes(@Param("veterinarian") VeterinarianUser veterinarian,@Param("appointmentDate") Date appointmentDate);
+    List<Appointment> findAll();
 }

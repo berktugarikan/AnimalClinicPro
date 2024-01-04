@@ -1,14 +1,16 @@
 package com.example.AnimalClinicPro.entity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
-    @AllArgsConstructor
+@AllArgsConstructor
     @NoArgsConstructor
     @Entity
     @Table(name = "Users")
     @Data
+@Getter
+@Setter
     public class User {
 
         @Id
@@ -33,8 +35,12 @@ import lombok.NoArgsConstructor;
         @Column(name = "Phone_Number", unique = true, nullable = false)
         private String phoneNumber;
 
-        @ManyToOne
+        @ManyToOne(fetch = FetchType.EAGER)
         @JoinColumn(name = "Authorization_ID", referencedColumnName = "ID")
-        private Permission permission;
+        @OnDelete(action = OnDeleteAction.SET_NULL)
+        private Permission authorization;
+
+
+
 
 }
