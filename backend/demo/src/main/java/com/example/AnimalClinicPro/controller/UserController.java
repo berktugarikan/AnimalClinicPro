@@ -4,6 +4,7 @@ package com.example.AnimalClinicPro.controller;
 
 
 import com.example.AnimalClinicPro.entity.User;
+import com.example.AnimalClinicPro.response.RegistrationResponse;
 import com.example.AnimalClinicPro.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
