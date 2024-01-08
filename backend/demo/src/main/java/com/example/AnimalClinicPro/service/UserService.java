@@ -1,10 +1,14 @@
 package com.example.AnimalClinicPro.service;
 
 import com.example.AnimalClinicPro.entity.User;
+import com.example.AnimalClinicPro.exceptions.UsedEmailException;
 import com.example.AnimalClinicPro.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,6 +61,22 @@ public class UserService {
         }
 
         return null;
+    }
+
+    @Transactional
+    public void userRegisteration(User newUser) throws UsedEmailException {
+        Iterator<User> getAllUsers = getAllUsers().iterator();
+        List<String> emails = new ArrayList<>();
+
+        while (getAllUsers.hasNext()){
+            emails.add(getAllUsers.next().getEmail());
+        }
+        if (emails.contains(newUser.getEmail())){
+            throw new UsedEmailException("Email already in use!!");
+        }else {
+
+            userRepository.save(newUser);
+        }
     }
 
     public void deleteUser(Long id) {
