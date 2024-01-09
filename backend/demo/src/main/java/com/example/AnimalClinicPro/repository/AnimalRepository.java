@@ -13,5 +13,4 @@ public interface AnimalRepository extends JpaRepository<Animal,Long> {
     Animal findAnimalByChipNumber(String chipNumber);
     List<Animal> findAll();
 
-
 }
