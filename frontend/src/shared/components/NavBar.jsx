@@ -5,8 +5,8 @@ export function NavBar(){
 
     
     const signUpButtonStyle = {
-        backgroundColor: "#6c9286", // Altın rengi için ASCII renk kodu
-        color: "#000000" ,// Metin rengi, isteğinize bağlı olarak ayarlayabilirsiniz
+        backgroundColor: "#6c9286", 
+        color: "#000000" ,
         border:"0",
         borderRadius:"15px",
         fontSize:"18px",
@@ -14,8 +14,8 @@ export function NavBar(){
     };
 
     const loginButtonStyle = {
-        backgroundColor: "#6c9286", // Kırmızı rengi için ASCII renk kodu
-        color: "#000000", // Metin rengi, isteğinize bağlı olarak ayarlayabilirsiniz
+        backgroundColor: "#6c9286", 
+        color: "#000000", 
         border:"0",
         borderRadius:"15px",
         fontSize:"18px",
@@ -23,7 +23,7 @@ export function NavBar(){
     };
 
     const animalClinicProTextStyle = {
-        color: "#00000" // İstediğiniz renge göre ayarlayabilirsiniz
+        color: "#00000" 
     };
 
 

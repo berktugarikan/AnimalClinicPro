@@ -1,44 +1,45 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-class VetÇıkış extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { password: '', confirmPassword: '' };
-    this.handleChange = this.handleChange.bind(this);
-    this.handleLogout = this.handleLogout.bind(this);
-  }
+const VetÇıkış = (props) => {
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
-  handleChange(event) {
-    this.setState({ [event.target.name]: event.target.value });
-  }
-
-  handleLogout() {
-    if (this.state.password && this.state.confirmPassword && this.state.password === this.state.confirmPassword) {
+  const handleLogout = () => {
+    if (password && confirmPassword && password === confirmPassword) {
       localStorage.removeItem('userData');
-      this.props.history.push('/homepage');
+      props.history.push('/homepage');
+    } else {
+      props.history.push('/vetmainpage');
     }
-  }
+  };
 
-  render() {
-    const { password, confirmPassword } = this.state;
-
-    return (
-      <div>
-        <h1 style={{ color:'#6c9286'}}>Logout</h1>
-        <div className="mb-2">
-          <label htmlFor="password" className="form-label">Password:</label>
-            <input type="password" name="password" onChange={this.handleChange} />
-        </div>
-        <div className="mb-2">
-          <label  htmlFor="confirmPassword" className="form-label">Password Repeat: </label>
-            <input type="password" name="confirmPassword" onChange={this.handleChange} />
-        </div>
-        <div className="text-center">
-        <button className="btn btn-primary" type="button" disabled={!password|| !confirmPassword || !(password == confirmPassword)}onClick={this.handleLogout}>Logout</button>
-        </div>
+  return (
+    <div>
+      <h1 style={{ color: '#6c9286' }}>Logout</h1>
+      <div className="mb-2">
+        <label htmlFor="password" className="form-label">
+          Password:
+        </label>
+        <input type="password" name="password" onChange={(e) => setPassword(e.target.value)} />
       </div>
-    );
-  }
-}
+      <div className="mb-2">
+        <label htmlFor="confirmPassword" className="form-label">
+          Password Repeat:
+        </label>
+        <input type="password" name="confirmPassword" onChange={(e) => setConfirmPassword(e.target.value)} />
+      </div>
+      <div className="text-center">
+        <button
+          className="btn btn-primary"
+          type="button"
+          disabled={!password || !confirmPassword || !(password === confirmPassword)}
+          onClick={handleLogout}
+        >
+          Logout
+        </button>
+      </div>
+    </div>
+  );
+};
 
 export default VetÇıkış;

@@ -1,72 +1,107 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+//import axios from "axios";
+import { useEffect, useState,useMemo } from "react";
+import { Alert } from "@/shared/components/Alert";
+import { Spinner } from "@/shared/components/Spinner";
+import { Input } from "@/shared/components/Input";
+import { LoginA } from "./api";
+import { useNavigate } from "react-router-dom";
 
-function LoginPage() {
-  const [username, setUserName] = useState('');
-  const [password, setPassword] = useState('');
+
+export function Login() {
+
+	
+	const [email, setEmail] = useState();
+	const [password, setPassword] = useState();
+	const [apiProgress,setApiProgress]=useState();
+	const [errors,setErrors]= useState({});
+	const [generalError,setGeneralError]=useState();
   const navigate = useNavigate();
 
-  const handleLogin = () => {
-    // Kullanıcı girişi kontrolü
-    /*if (!username || !password) {
-        alert('Kullanıcı adı ve şifre girilmelidir.');
-        return;
-      }*/
 
-    // Başarılı giriş durumunda yönlendirme
-    navigate.push('/vetmainpage');
+	useEffect( () => {
+		setErrors(function(lastErrors){
+			return{
+				...lastErrors,
+				email: undefined
+			}
+		});
+	}, [email])
+
+  useEffect( () => {
+		setErrors(function(lastErrors){
+			return{
+				...lastErrors,
+				password: undefined
+			}
+		});
+	}, [password])
+
+  const onLoginSuccess = (user) => {
+    console.log("Login success!", user);
+    navigate("/vetmainpage");
   };
 
-  return (
-    /*<div>
-      <h1>Login Page</h1>
-      <form>
-        <label>Username:</label>
-        <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
+  const onLoginFailure = () => {
+    console.log("Login failure!");
+    navigate("/");
+  };
 
-        <label>Password:</label>
-        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
 
-        <button type="button" onClick={handleLogin}>Login</button>
-      </form>
-    </div>
+	const onSubmit = async (event) => {
+		event.preventDefault();
+		setGeneralError();
+		setApiProgress(true);
+
+		try{
+      await LoginA({email, password})
+      onLoginSuccess(response.data.user)
+      navigate("/vetmainpage")
+
+
+	} catch (axiosError){
+		if( axiosError.response?.data && 
+		axiosError.response.data.status === 400)
+		{setErrors(axiosError.response.data.validationErrors);
+		}else {
+		setGeneralError('Unexpected error occured. Please try again');
+    onLoginFailure();
+		}
+	} finally {
+		setApiProgress(false)
+	}
+
+	};
+
+	
+	return (
+		<div className="container">
+		<div className="col-lg-6 offset-lg-3 col-sm-8 offset-sm-2">
+		< form className= "card" onSubmit={onSubmit}>
+				<div className="text-center card-header">
+						<h1 style={{ color:'#6c9286'} }>Login</h1>
+					</div>
+					<div className="card-body"> 
+					<Input id="email" label="E-mail:" error={errors.email}
+					onChange={(event) => setEmail(event.target.value)}/>
+					<Input id="password" label="Password:" error={errors.password}
+					onChange={(event) => setPassword(event.target.value)}/>
+		{generalError &&(
+			<Alert styleType="danger">{generalError}</Alert>
+			)}
+		<div className="text-center">
+				<button
+				className="btn btn-primary"
+					disabled={apiProgress || !email || !password}>
+						{apiProgress && (
+							<Spinner sm={true} />
+						)}
+				
+						Login
+						</button>
+						</div>
+					</div>
+			</form >
+			</div>
+		</div>
   );
-}*/
-
-    <div className="container">
-    <div className="col-lg-6 offset-lg-3 col-sm-8 offset-sm-2">
-    < form className= "card">
-            <div className="text-center card-header">
-                    <h1 style={{ color:'#6c9286'} }>Login</h1>
-                </div>
-                <div className="card-body"> 
-    <div className="mb-3">
-        <label htmlFor="username" className="form-label">UserName:</label>
-                <input id="username"
-        className="form-control"
-            onChange={(event) => setUserName(event.target.value)}
-        />
-    </div>
-    <div className="mb-3">
-                <label htmlFor="password" className="form-label">Password:</label>
-                <input id="password" type="password" className="form-control"
-            onChange={(event) => setPassword(event.target.value)}
-        />
-    </div>
-    <div className="text-center">
-            <button
-            className="btn btn-primary"
-                disabled={!username || !password  } onClick={handleLogin} >Login</button>
-                    </div>
-                </div>
-        </form >
-        </div>
-    </div>
-
-
-);
-
-
-
 }
-export default LoginPage;

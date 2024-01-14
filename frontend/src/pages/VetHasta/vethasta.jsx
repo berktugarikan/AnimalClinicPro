@@ -12,16 +12,12 @@ const PetCard = () => {
   const [petData, setPetData] = useState({});
 
   useEffect(() => {
-    // Mock bir API'dan veri çekme işlemi
-    // Bu kısmı gerçek bir veritabanı ile değiştirmeniz gerekir
     fetch('https://jsonplaceholder.typicode.com/todos/1')
       .then((response) => response.json())
       .then((data) => setPetData(data));
   }, []);
 
   const handleChoose = () => {
-    // Burada "choose" butonuna tıklandığında yapılacak işlemleri ekleyebilirsiniz.
-    // Örneğin, bir fonksiyon çağırabilir veya başka bir sayfaya yönlendirebilirsiniz.
     console.log('Pet chosen:', petData);
   };
 

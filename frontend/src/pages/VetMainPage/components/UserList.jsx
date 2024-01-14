@@ -12,7 +12,7 @@ export function UserList (){
      });
 
      const [searchTerm,setSearchTerm]=useState("");
-     const [selectedUserId,setSelectedId]= useState(null);
+     const [selectedUserId,setSelectedUserId]= useState(null);
 
 
      const [apiProgress,setApiProgress]=useState(false);

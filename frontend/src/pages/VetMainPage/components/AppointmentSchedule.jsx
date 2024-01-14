@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useCallback } from 'react';
-//import { loadUsers, loadVaccineSchedules } from '@/lib/api';
+//import { loadUsers, loadAppointmentSchedules } from '@/lib/api';
 import { Spinner } from '@/shared/components/Spinner';
 import { UserListItem } from './UserListItem';
 
-export function VaccineScheduleList() {
-  const [vaccineSchedules, setVaccineSchedules] = useState([]);
+export function AppointmentSchedule() {
+  const [appointmentSchedules, setAppointmentSchedules] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [apiProgress, setApiProgress] = useState(false);
@@ -15,17 +15,17 @@ export function VaccineScheduleList() {
       const usersResponse = await loadUsers();
       const users = usersResponse.data;
 
-      const vaccineSchedulesResponse = await loadVaccineSchedules();
-      const fetchedVaccineSchedules = vaccineSchedulesResponse.data;
+      const appointmentSchedulesResponse = await loadAppointmentSchedules();
+      const fetchedAppointmentSchedules = appointmentSchedulesResponse.data;
 
       const mergedSchedules = users.map((user) => ({
         ...user,
-        vaccineSchedule: fetchedVaccineSchedules.find((schedule) => schedule.userId === user.id)?.schedule || '',
+        appointmentSchedule: fetchedAppointmentSchedules.find((schedule) => schedule.userId === user.id)?.schedule || '',
       }));
 
-      setVaccineSchedules(mergedSchedules);
+      setAppointmentSchedules(mergedSchedules);
     } catch (error) {
-      console.error('Aşı takvimi veri çekme hatası: ', error);
+      console.error('Muayene takvimi veri çekme hatası: ', error);
     } finally {
       setApiProgress(false);
     }
@@ -39,10 +39,10 @@ export function VaccineScheduleList() {
   return (
     <div className="card">
       <div className="card-header text-center fs-4" style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <span>Vaccine Schedule List</span>
+        <span>Appointment Schedule List</span>
       </div>
       <ul className="list-group list-group-flush">
-        {vaccineSchedules
+        {appointmentSchedules
           .filter((user) => user.username.toLowerCase().includes(searchTerm.toLowerCase()))
           .map((user) => (
             <UserListItem

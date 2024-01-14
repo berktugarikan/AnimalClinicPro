@@ -31,27 +31,14 @@ function VetMainPage() {
 }
 
 export default VetMainPage;*/
-
-// VetMainPage.js
-/*import React from 'react';
-
-function VetMainPage() {
-  return (
-    <div>
-      <h1>Vet Main Page</h1>
-      {/* VetMainPage içeriği buraya eklenebilir /}
-    </div>
-  );
-}
-
-export default VetMainPage;*/
-
-// VetMainPage.js
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import axios from 'axios';
+import { Link, useNavigate } from 'react-router-dom';
 import './VetMainPage.css';
 import { UserList } from './components/UserList';
 import { VaccineScheduleList } from './components/VaccineScheduleList';
+
 
 const userData = [
   { id: 1, name: 'User 1', vaccineSchedule: 'Aşı Takvimi 1' },
@@ -62,33 +49,64 @@ const userData = [
 
 function VetMainPage() {
 
+  const navigate=useNavigate();
+
+  const [newUser, setNewUser] = useState({
+    firstName: '',
+    lastName: '',
+    username: '',
+    password: '',
+    email: '',
+    phoneNumber: ''
+  });
+
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewUser({ ...newUser, [name]: value });
+  };
+
+  const handleAddUser = () => {
+    
+    axios.post('/api/addCustomer', newUser)
+      .then(response => {
+        console.log(response.data);
+        navigate('/createuser');
+      })
+      .catch(error => console.error('Kullanıcı ekleme hatası: ', error));
+  };
+
+
   return(
   <div className="main-container">
   <div className="left-menu">
     <div className="menu-box">
-        <Link to="/VetGenelHastaKabul">Hasta Kabul</Link>
+        <Link to="/VetGenelHastaKabul">Patient Admission</Link>
       </div>
       <div className="menu-box">
-        <Link to="/VetGenelMR">Muayene Randevuları</Link>
+        <Link to="/VetGenelMR">Appointments</Link>
       </div>
       <div className="menu-box">
-        <Link to="/VetGenelMRG">Muayene Randevu Geçmişi</Link>
+        <Link to="/VetGenelMRG">Appointment History</Link>
       </div>
       <div className="menu-box">
-        <Link to="/VetGenelAR">Aşı Randevuları</Link>
+        <Link to="/VetGenelAR">Vaccine Appointments</Link>
       </div>
       <div className="menu-box">
-        <Link to="/VetGenelARG">Aşı Randevu Geçmişi</Link>
+        <Link to="/VetGenelARG">Vaccine Appointment History</Link>
      </div>
      <div className="menu-box">
-        <Link to="/VetGenelTahlil">Tahliller</Link>
+        <Link to="/VetGenelTahlil">Laboratory Tests</Link>
       </div>
       <div className="menu-box">
-        <Link to="/VetGenelÖdemeGeçmişi">Hasta Ödeme Geçmişi</Link>
+        <Link to="/VetGenelÖdemeGeçmişi">Payment Hİstory</Link>
      </div>
   </div>
   <div className="right-content">
     <h1>Vet Main Page</h1>
+      <div className='add-user-form'>
+        <button type="button" onClick={handleAddUser}>Create User</button>
+      </div>
    {/*} <div>
       {userData.map(user => (
         <div key={user.id} className="customer-card">

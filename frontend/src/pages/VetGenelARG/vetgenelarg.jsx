@@ -1,10 +1,28 @@
-import * as React from 'react';
+import React from 'react';
 import SelectionBar from '@/shared/components/SelectionBar';
+import PastVaccineAppointments  from '../VetMainPage/components/PastVaccineAppointments';
+
+const containerStyle = {
+  display: 'flex',
+  
+};
+
+const selectionBarStyle = {
+  flex:'1',
+};
+
+const pastVaccineAppointmentsStyle ={
+  flex:'1',
+};
 
 function VetGenelARG() {
   return (
     <div>
-      <SelectionBar />
+      <h1>Veterinary Vaccine Appointments History</h1>
+      <div style={containerStyle}>
+        <SelectionBar style={selectionBarStyle} />
+        <PastVaccineAppointments style ={pastVaccineAppointmentsStyle} />
+      </div>
     </div>
   );
 }

@@ -4,14 +4,24 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
+import { useNavigate } from 'react-router-dom';
 
-const pages = ['Hasta Kabul', 'Muayene Randevu', 'Muayene Randevu Geçmişi', 'Aşı Randevuları', 'Aşı Randevu Geçmişi', 'Tahliller', 'Hasta Ödeme Geçmişi'];
+const pages = [
+  {name:'Patient Admission',path:'/vetgenelhastakabul'},
+  {name: 'Appointments', path:'/vetgenelmr'},
+  {name:'Appointment History', path:'/vetgenelmrg'},
+  {name:'Vaccine Appointments',path:'/vetgenelar'},
+  {name:'Vaccine Appointment History',path:'/vetgenelarg'},
+  {name:'Laboratory Tests',path:'/vetgeneltahlil'},
+  {name:'Payment History',path:'/vetgenelödemegeçmişi'}];
 
 export default function SelectionBar() {
-  const [selectedPage, setSelectedPage] = React.useState('Hasta Kabul');
+  const [selectedPage, setSelectedPage] = React.useState();
+  const navigate=useNavigate();
 
   const handlePageClick = (page) => {
-    setSelectedPage(page);
+    setSelectedPage(page.name);
+    navigate(page.path);
   };
 
   return (
@@ -36,7 +46,7 @@ export default function SelectionBar() {
                   },
                 }}
               >
-                <ListItemText primary={page} />
+                <ListItemText primary={page.name} />
               </ListItemButton>
             </ListItem>
           ))}
