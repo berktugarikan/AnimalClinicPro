@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 //import { loadUsers, loadAppointmentSchedules } from '@/lib/api';
 import { Spinner } from '@/shared/components/Spinner';
-import { UserListItem } from './UserListItem';
+import  UserListItem  from './UserListItem';
 
 export function AppointmentSchedule() {
   const [appointmentSchedules, setAppointmentSchedules] = useState([]);

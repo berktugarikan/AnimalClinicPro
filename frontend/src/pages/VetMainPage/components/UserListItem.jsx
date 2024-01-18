@@ -17,16 +17,24 @@ return (
 
 import { useState } from "react";
 
-export function UserListItem({ user, selected, onSelect }) {
+import React from "react";
+
+const UserListItem = ({ user, selected, onSelect }) => {
   return (
     <li
-      className={`list-group-item list-group-item-action ${
-        selected ? "active" : ""
-      }`}
+      className={`list-group-item ${selected ? "active" : ""}`}
       onClick={onSelect}
     >
-      {user.username}
+      <div>
+        <strong>Name:</strong> {user.firstname}
+        <strong>Surname: </strong> {user.surname}
+      </div>
+      <div>
+        <strong>Email:</strong> {user.email}
+      </div>
+      {/* Diğer kullanıcı bilgilerini ekleyebilirsiniz */}
     </li>
   );
-}
+};
 
+export default UserListItem;

@@ -1,7 +1,7 @@
 import {createBrowserRouter  } from "react-router-dom";
 import App from "../App";
 import HomePage  from "@/pages/HomePage/homepage";
-import { SignUp } from "@/pages/SignUp/signup";
+import  SignUp  from "@/pages/SignUp/signup";
 import VetMainPage from "@/pages/VetMainPage/vetmainpage.jsx";
 import VetGenelHastaKabul from "@/pages/VetGenelHastaKabul/vetgenelhastakabul.jsx";
 import VetGenelMR from "@/pages/VetGenelMR/vetgenelmr.jsx";

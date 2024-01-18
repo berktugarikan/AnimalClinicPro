@@ -1,73 +1,88 @@
 import { Spinner } from "@/shared/components/Spinner";
-import { useCallback, useEffect, useState} from "react";
-import { UserListItem } from "./UserListItem";
+import { useCallback, useEffect, useState } from "react";
+import axios from 'axios';
+import { colors } from "@mui/material";
 
+export function UserList() {
+  const [users, setUsers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [usersPerPage] = useState(5);
 
-export function UserList (){
-     const [userPage,setUserPage] = useState({
-        content:[{username:"test"}],
-        last: false,
-        first: false,
-        number:0
-     });
+  const getUsers = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`http://localhost:8080/api/users`);
+      console.log(response.data); // Veriyi konsolda kontrol et
+      setUsers(response.data);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-     const [searchTerm,setSearchTerm]=useState("");
-     const [selectedUserId,setSelectedUserId]= useState(null);
+  useEffect(() => {
+    getUsers(); // Sayfa yüklendiğinde ilk çağrıyı yap
+  }, [getUsers]);
 
+  // Toplam sayfa sayısını hesapla
+  const totalPages = Math.ceil(users.length / usersPerPage);
 
-     const [apiProgress,setApiProgress]=useState(false);
+  // Şu anki sayfadaki kullanıcıları al
+  const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
+  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
 
-     const getUsers = useCallback(async(page) => {
-            setApiProgress(true);
-            try{
-                const response = await LoadUserspage();
-                setUserPage(response.data);
-            } catch{
-
-            } finally {
-              setApiProgress(false) ;
-            }
-
-
-    
-     })
-
-     useEffect(() => {
-       getUsers();
-     }, []);
-
-     return (
-        <div className="card">
-        <div className="card-header text-center fs-4" style={{ display:'flex',justifyContent:'space-between'}}>
-             <span>User List </span>
-             <div style={{ marginleft:'auto'}}>
-             <input
-             type="text"
-             placeholder="Search UserName"
-             value={searchTerm}
-             onChange={(e) => setSearchTerm(e.target.value)}
-             style={{width:'185px',height:'30px'}}/>
-             </div>
-             </div>
-        <ul className="list-group list-group-flush">
-            {userPage.content
-            .filter((user) =>
-            user.username.toLowerCase().includes(searchTerm.toLowerCase())
-            )
-            .map((user) => {
-          return <UserListItem 
-           key = {user.id}
-           user={user}
-           selected={user.id===selectedUserId}
-           onSelect={() => setSelectedUserId(user.id)}/>;
-            })}
-        </ul>
-        <div className="card-footer text-center">
-            {apiProgress &&  <Spinner />} 
-        {!apiProgress && !userPage.first && <button className="btn btn-outline-secondary btn-sm float-start custom-btn" onClick={ () => getUsers(userPage.number-1)}>Previous</button>}
-        {!apiProgress && !userPage.last && <button  className="btn btn-outline-secondary btn-sm float-end custom-btn" onClick={ () => getUsers(userPage.number+1)}>Next</button>}
+  return (
+    <div className="card">
+      <div className="card-header text-center fs-4" style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <span>User List</span>
+        <div style={{ marginLeft: 'auto' }}>
+          <input
+            type="text"
+            placeholder="Search Name"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ width: '185px', height: '30px' }}
+          />
         </div>
-       
-        </div>
-     );
+      </div>
+      <ul style={{backgroundColor: 'white'}} className="list-group list-group-flush">
+        {loading ? (
+          <Spinner />
+        ) : currentUsers.length > 0 ? (
+          currentUsers
+            .filter((user) => user.username.toLowerCase().includes(searchTerm.toLowerCase()))
+            .map((user) => (
+              <li key={user.id}>
+                {/* Buraya UserListItem ile ilgili içeriği ekleyebilirsiniz */}
+                <p>
+                  <strong>Name-Surname:</strong> {user.firstname} {user.surname}
+                </p>
+                <p>
+                  <strong>Email:</strong> {user.email}
+                </p>
+                <hr />
+              </li>
+            ))
+        ) : (
+          <li>No users found</li>
+        )}
+      </ul>
+      {/* Sayfa sayısına göre navigasyon düğmeleri ekleyin */}
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
+        {Array.from({ length: totalPages }).map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentPage(index + 1)}
+            style={{ margin: '0 5px', cursor: 'pointer', padding: '5px 10px', backgroundColor: currentPage === index + 1 ? 'lightblue' : 'white' }}
+          >
+            {index + 1}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
 }

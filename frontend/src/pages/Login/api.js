@@ -1,5 +1,13 @@
-//import http from "@/lib/http"; 
+import axios from "axios";
 
-export function LoginA(credentials){
-    return http.post("/api/v1/auth",credentials)
-}
+const BASE_URL = "http://localhost:8080";
+
+
+export const login = async (email, password) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/login/${email}/${password}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

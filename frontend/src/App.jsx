@@ -5,7 +5,7 @@ import VetMainBar from "./shared/components/VetMainBar";
 
 function App() {
   const location = useLocation();
-  const showNavBar = ["/homepage", "/signup", "/login"].includes(location.pathname);
+  const showNavBar = ["/","/homepage", "/signup", "/login"].includes(location.pathname);
 
   return (
     <>

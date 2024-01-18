@@ -1,124 +1,93 @@
-import axios from "axios";
-import { useEffect, useState,useMemo } from "react";
-import { SignUpA } from "./api";
-import { Input } from "@/shared/components/Input";
-import { Alert } from "@/shared/components/Alert";
-import { Spinner } from "@/shared/components/Spinner";
+import React, { useState } from 'react';
 
-
-
-export function SignUp() {
-
-	const [firstname,setFirstName]=useState();
-	const [lastname,setLastName]=useState();
-	const [username, setUserName] = useState();
-	const [email, setEmail] = useState();
-	const [phone,setPhone]= useState();
-	const [password, setPassword] = useState();
-	const [passwordRepeat, setPasswordRepeat] = useState();
-	const [apiProgress,setApiProgress]=useState();
-	const [successMessage, setSuccessMessage]=useState();
-	const [errors,setErrors]= useState({});
-	const [generalError,setGeneralError]=useState();
-
-	useEffect( () => {
-		setErrors(function(lastErrors){
-			return{
-				...lastErrors,
-				username: undefined
-			}
-		});
-	}, [username])
-
-	useEffect( () => {
-		setErrors(function(lastErrors){
-			return{
-				...lastErrors,
-				email: undefined
-			}
-		});
-	}, [email])
-
-
-	const onSubmit = async (event) => {
-		event.preventDefault();
-		setSuccessMessage();
-		setGeneralError();
-		setApiProgress(true);
-
-		try{
-		const response =await SignUpA({
-			firstname,
-			lastname,
-			username,
-			email,
-			phone,
-			password,
-		})
-		setSuccessMessage (response.data.message);
-		window.location.href = '/login';
-	} catch (axiosError){
-		if( axiosError.response?.data && 
-			axiosError.response.data.status === 400)
-		{setErrors(axiosError.response.data.validationErrors);
-		}else {
-			setGeneralError('Unexpected error occured. Please try again');
+const SignUp = () => {
+	const [formData, setFormData] = useState({
+		firstname: '',
+		surname: '',
+		username: '',
+		password: '',
+		email: '',
+		phoneNumber: '',
+		permission: {
+		  id: 1,
+		  permissionName: 'ADMIN'
 		}
-	} finally {
-		setApiProgress(false)
-	}
+	  });
 
-	};
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
 
-	const passwordRepeatError =useMemo(() => {
-	if( password && password !== passwordRepeat){
-		console.log('always running')
-		return'Password mismatch'
-	}
-	return '';
-},[password,passwordRepeat]);
-	
-	return (
-		<div className="container">
-		<div className="col-lg-6 offset-lg-3 col-sm-8 offset-sm-2">
-		< form className= "card" onSubmit={onSubmit}>
-				<div className="text-center card-header">
-						<h1 style={{ color:'#6c9286'} }>SignUp</h1>
-					</div>
-					<div className="card-body">
-					<Input id="firstname" label="FirstName:" error={errors.firstname}
-					onChange={(event) => setFirstName(event.target.value)}/> 
-					<Input id="lastname" label="LastName:" error={errors.lastname}
-					onChange={(event) => setLastName(event.target.value)}/>
-					<Input id="username" label="UserName:" error={errors.username}
-					onChange={(event) => setUserName(event.target.value)}/>
-					<Input id="email" label="E-mail:" error={errors.email}
-					onChange={(event) => setEmail(event.target.value)}/>
-					<Input id="password" label="Password:" error={errors.password}
-					onChange={(event) => setPassword(event.target.value)}/>
-					<Input id="passwordRepeat" label="Password Repeat:" error={passwordRepeatError}
-					onChange={(event) => setPasswordRepeat(event.target.value)}/>
-		
-		{successMessage && (
-			<Alert>{successMessage}</Alert>
-			)}
-		{generalError &&(
-			<Alert styleType="danger">{generalError}</Alert>
-			)}
-		<div className="text-center">
-				<button
-				className="btn btn-primary"
-					disabled={apiProgress || !firstname || !lastname ||!username || !email || !phone || !password || password !== passwordRepeat}>
-						{apiProgress && (
-							<Spinner sm={true} />
-						)}
-				
-						SignUp
-						</button>
-						</div>
-					</div>
-			</form >
-			</div>
-		</div>
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    
+
+    // API endpoint URL'sini güncelleyin
+    const apiUrl = 'http://localhost:8080/api/users';
+
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Registration successful:', data);
+        // Başarılı kayıt durumunda istediğiniz işlemleri gerçekleştirin
+      } else {
+        console.error('Registration error:', response.statusText);
+        // Hata durumunda istediğiniz işlemleri gerçekleştirin
+      }
+    } catch (error) {
+      console.error('Registration error:', error.message);
+      // Hata durumunda istediğiniz işlemleri gerçekleştirin
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <label>
+        Firstname:
+        <input type="text" name="firstname" value={formData.firstname} onChange={handleChange} />
+      </label>
+      <br />
+      <label>
+        Surname:
+        <input type="text" name="surname" value={formData.surname} onChange={handleChange} />
+      </label>
+      <br />
+      <label>
+        Username:
+        <input type="text" name="username" value={formData.username} onChange={handleChange} />
+      </label>
+      <br />
+      <label>
+        Password:
+        <input type="password" name="password" value={formData.password} onChange={handleChange} />
+      </label>
+      <br />
+      <label>
+        Email:
+        <input type="text" name="email" value={formData.email} onChange={handleChange} />
+      </label>
+      <br />
+      <label>
+        Phone Number:
+        <input type="text" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} />
+      </label>
+      <br />
+      <button type="submit">Register</button>
+    </form>
   );
-}
+};
+
+export default SignUp;
