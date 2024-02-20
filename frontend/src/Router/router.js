@@ -9,7 +9,7 @@ import VetGenelMRG from "@/pages/VetGenelMRG/vetgenelmrg.jsx";
 import VetGenelAR from "@/pages/VetGenelAR/vetgenelar.jsx";
 import VetGenelARG from "@/pages/VetGenelARG/vetgenelarg.jsx";
 import VetGenelTahlil from "@/pages/VetGenelTahlil/vetgeneltahlil.jsx";
-import VetGenelÖdemeGeçmişi from "@/pages/VetGenelÖdemeGeçmişi/vetgenelödemegeçmişi.jsx"; 
+import VetGenelÖdemeGeçmişi from "@/pages/VetGenelÖdemeGeçmişi/vetgenelödemegeçmişi.jsx";
 import {Login} from "@/pages/Login/login.jsx";
 import { Activation } from "@/pages/Activation/Activation.jsx";
 import VetProfilBilgileri from "@/pages/VetProfilBilgileri/vetprofilbilgileri.jsx";
@@ -19,6 +19,7 @@ import VetHasta from "@/pages/VetHasta/vethasta";
 import CreateUser from "@/pages/VetMainPage/createuser";
 import VetFinancial from "@/pages/VetFinancial/vetfinancial.jsx";
 import VetLaboratory from "@/pages/VetLaboratory/vetLaboratory.jsx";
+import {AddAppointment} from "@/pages/VetGenelMR/addAppointment.jsx";
 
 
 
@@ -57,6 +58,10 @@ export default createBrowserRouter([
             {
                 path:"/createuser",
                 Component: CreateUser,
+            },
+            {
+                path:"/addAppointment",
+                Component: AddAppointment,
             },
             {
                 path:"/vetgenelhastakabul",
@@ -121,4 +126,3 @@ export default createBrowserRouter([
 
 
 
-  
