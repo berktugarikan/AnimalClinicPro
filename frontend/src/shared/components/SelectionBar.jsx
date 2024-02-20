@@ -8,9 +8,8 @@ import { useNavigate } from 'react-router-dom';
 
 const pages = [
   {name:'Patient Admission',path:'/vetgenelhastakabul'},
-  {name: 'Appointments', path:'/vetgenelmr'},
+  {name: 'Appointments', path:'/addAppointment'},
   {name:'Appointment History', path:'/vetgenelmrg'},
-  {name:'Vaccine Appointments',path:'/vetgenelar'},
   {name:'Vaccine Appointment History',path:'/vetgenelarg'},
   {name:'Laboratory Tests',path:'/vetgeneltahlil'},
   {name:'Payment History',path:'/vetgenelödemegeçmişi'}];

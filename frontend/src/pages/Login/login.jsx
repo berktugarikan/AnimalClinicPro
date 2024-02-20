@@ -5,6 +5,7 @@ import { Spinner } from "@/shared/components/Spinner";
 import { Input } from "@/shared/components/Input";
 import { login } from "./api";  // api.js dosyasından import edildi
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export function Login() {
   const [email, setEmail] = useState("");
@@ -37,12 +38,15 @@ export function Login() {
   };
 
   const onSubmit = async (event) => {
+
     event.preventDefault();
+
     setGeneralError(null);
     setApiProgress(true);
 
     try {
-      const user = await login(email, password);
+      const response = await login(email, password);
+      console.log(response)
       onLoginSuccess();
     } catch (error) {
       if (error.response?.data && error.response.data.status === 400) {
@@ -82,8 +86,9 @@ export function Login() {
             {generalError && <Alert styleType="danger">{generalError}</Alert>}
             <div className="text-center">
               <button
+                type='submit'
                 className="btn btn-primary"
-                disabled={apiProgress || !email || !password}
+                //disabled={apiProgress || !email || !password}
               >
                 {apiProgress && <Spinner sm={true} />}
                 Login

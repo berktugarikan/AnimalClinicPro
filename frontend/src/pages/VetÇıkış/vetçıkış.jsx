@@ -1,16 +1,14 @@
 import React, { useState } from 'react';
-
+import { useNavigate } from "react-router-dom";
 const VetÇıkış = (props) => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const handleLogout = () => {
-    if (password && confirmPassword && password === confirmPassword) {
-      localStorage.removeItem('userData');
-      props.history.push('/homepage');
-    } else {
-      props.history.push('/vetmainpage');
-    }
+      const navigate = useNavigate();
+      localStorage.removeItem('authUser');
+      localStorage.removeItem('user-token');
+      navigate('/login');
   };
 
   return (
