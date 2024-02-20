@@ -1,17 +1,18 @@
 import React from 'react';
 import { useState } from 'react';
 import axios from 'axios';
+import {useNavigate} from "react-router-dom";
 
 function CreateUser() {
   const [newUser, setNewUser] = useState({
-    firstName: '',
-    lastName: '',
+    firstname: '',
+    surname: '',
     username: '',
     password: '',
     email: '',
     phoneNumber: ''
   });
-
+  const navigate = useNavigate();
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewUser({ ...newUser, [name]: value });
@@ -19,7 +20,12 @@ function CreateUser() {
 
   const handleCreateUser = async () => {
     try {
-      const response = await axios.post('https://example.com/api/createUser', newUser);
+      console.log(newUser)
+
+      const response = await axios.post('http://localhost:8080/api/users', newUser);
+      if(response.status === 201){
+        navigate('/vetmainpage')
+      }
       console.log('Yeni kullanıcı oluşturuldu:', response.data);
     } catch (error) {
       console.error('Kullanıcı oluşturulurken bir hata oluştu:', error);
@@ -39,7 +45,7 @@ function CreateUser() {
               FirstName:
               <input
                 type="text"
-                name="firstName"
+                name="firstname"
                 value={newUser.firstName}
                 onChange={handleInputChange}
                 className="form-control"
@@ -51,8 +57,8 @@ function CreateUser() {
               LastName:
               <input
                 type="text"
-                name="lastName"
-                value={newUser.lastName}
+                name="surname"
+                value={newUser.surname}
                 onChange={handleInputChange}
                 className="form-control"
               />

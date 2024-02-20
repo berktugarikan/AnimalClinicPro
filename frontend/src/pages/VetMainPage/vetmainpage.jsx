@@ -38,6 +38,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import './VetMainPage.css';
 import { UserList } from './components/UserList';
 import { VaccineScheduleList } from './components/VaccineScheduleList';
+import {Button} from "react-bootstrap";
 
 
 const userData = [
@@ -67,13 +68,8 @@ function VetMainPage() {
   };
 
   const handleAddUser = () => {
-    
-    axios.post('/api/addCustomer', newUser)
-      .then(response => {
-        console.log(response.data);
-        navigate('/createuser');
-      })
-      .catch(error => console.error('Kullanıcı ekleme hatası: ', error));
+
+    navigate('/createuser');
   };
 
 
@@ -84,13 +80,10 @@ function VetMainPage() {
         <Link to="/VetGenelHastaKabul">Patient Admission</Link>
       </div>
       <div className="menu-box">
-        <Link to="/VetGenelMR">Appointments</Link>
+        <Link to="/addAppointment">Appointments</Link>
       </div>
       <div className="menu-box">
         <Link to="/VetGenelMRG">Appointment History</Link>
-      </div>
-      <div className="menu-box">
-        <Link to="/VetGenelAR">Vaccine Appointments</Link>
       </div>
       <div className="menu-box">
         <Link to="/VetGenelARG">Vaccine Appointment History</Link>
@@ -105,7 +98,7 @@ function VetMainPage() {
   <div className="right-content">
     <h1>Vet Main Page</h1>
       <div className='add-user-form'>
-        <button type="button" onClick={handleAddUser}>Create User</button>
+        <Button type="button" onClick={handleAddUser}>Create User</Button>
       </div>
    {/*} <div>
       {userData.map(user => (
@@ -117,7 +110,7 @@ function VetMainPage() {
       </div> */}
 
       <UserList />
-      <VaccineScheduleList />
+
   </div>
 </div>
 );

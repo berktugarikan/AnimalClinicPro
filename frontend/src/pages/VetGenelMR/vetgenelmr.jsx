@@ -11,7 +11,7 @@ const selectionBarStyle = {
 };
 
 const appointmentScheduleStyle = {
-  flex: '2', 
+  flex: '2',
 };
 
 function VetGenelMR() {

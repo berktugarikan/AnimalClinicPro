@@ -4,7 +4,7 @@ import PastAppointments  from '../VetMainPage/components/PastAppointments';
 
 const containerStyle = {
   display: 'flex',
-  
+
 };
 
 const selectionBarStyle = {
