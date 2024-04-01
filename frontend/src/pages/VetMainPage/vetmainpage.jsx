@@ -88,11 +88,18 @@ function VetMainPage() {
       <div className="menu-box">
         <Link to="/VetGenelARG">Vaccine Appointment History</Link>
      </div>
+    <div className="menu-box">
+      <Link to="/vetgenelargadd">Vaccine Add</Link>
+    </div>
      <div className="menu-box">
         <Link to="/VetGenelTahlil">Laboratory Tests</Link>
       </div>
+    <div className="menu-box">
+      <Link to="/addLabResult">Laboratory Result Add</Link>
+    </div>
+
       <div className="menu-box">
-        <Link to="/VetGenelÖdemeGeçmişi">Payment Hİstory</Link>
+        <Link to="/VetGenelÖdemeGeçmişi">Payment History</Link>
      </div>
   </div>
   <div className="right-content">

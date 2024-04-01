@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from "axios";
 //import { getPastAppointments } from 'path-to-your-api';
 
-function PastAppointments() {
+function PastVaccineAppointments() {
   const [pastAppointments, setPastAppointments] = useState([]);
 
   useEffect(() => {
@@ -21,7 +21,7 @@ function PastAppointments() {
             <tr>
                 <th>Veterinarian</th>
                 <th scope='col'>Customer</th>
-                <th>Animal</th>
+                <th>Anmimal</th>
                 <th scope='col'>Appointment Date</th>
                 <th scope='col'>Appointment Time</th>
                 <th scope='col'>Appointment Type</th>
@@ -51,4 +51,4 @@ function PastAppointments() {
   );
 }
 
-export default PastAppointments;
+export default PastVaccineAppointments;

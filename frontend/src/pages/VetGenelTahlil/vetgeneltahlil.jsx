@@ -45,7 +45,7 @@ const VetGenelTahlil = () => {
                             <tr>
                                 <th>Veterinarian</th>
                                 <th scope='col'>Customer</th>
-                                <th>Anmimal</th>
+                                <th>Animal</th>
                                 <th scope='col'>Test Date</th>
                                 <th scope='col'>Test Type</th>
                                 <th scope='col'>Test Description</th>

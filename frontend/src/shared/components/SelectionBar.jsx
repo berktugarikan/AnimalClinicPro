@@ -11,7 +11,9 @@ const pages = [
   {name: 'Appointments', path:'/addAppointment'},
   {name:'Appointment History', path:'/vetgenelmrg'},
   {name:'Vaccine Appointment History',path:'/vetgenelarg'},
+  {name:'Vaccine Add',path:'/vetgenelargadd'},
   {name:'Laboratory Tests',path:'/vetgeneltahlil'},
+  {name:'Laboratory Result Add',path:'/addLabResult'},
   {name:'Payment History',path:'/vetgenelödemegeçmişi'}];
 
 export default function SelectionBar() {

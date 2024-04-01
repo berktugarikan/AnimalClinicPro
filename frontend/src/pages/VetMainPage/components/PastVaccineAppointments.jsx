@@ -24,7 +24,7 @@ function PastVaccineAppointments() {
           <tr>
             <th>Veterinarian</th>
             <th scope='col'>Customer</th>
-            <th>Animal</th>
+            <th>Anmimal</th>
             <th scope='col'>Appointment Date</th>
             <th scope='col'>Appointment Time</th>
             <th scope='col'>Appointment Type</th>
