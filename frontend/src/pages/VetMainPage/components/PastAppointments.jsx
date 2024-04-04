@@ -4,12 +4,18 @@ import axios from "axios";
 
 function PastVaccineAppointments() {
   const [pastAppointments, setPastAppointments] = useState([]);
+  const [userId, setUserId] = useState(0);
 
   useEffect(() => {
 
     const fetchData = async () => {
-      const response = await axios.get('http://localhost:8080/api/appointments');
-      setPastAppointments(response.data);
+        axios.get("http://localhost:8080/api/appointments")
+            .then(response => {
+                setPastAppointments(response.data)
+            })
+            .catch(error => {
+                console.log(error);
+            })
     };
     fetchData();
   }, []);
@@ -30,8 +36,8 @@ function PastVaccineAppointments() {
             </tr>
             {pastAppointments.map((appointment) => (
                 <tr key={appointment.id}>
-                <td>{appointment?.veterinarian?.user?.firstname} - {appointment?.veterinarian?.user?.surname}</td>
-                <td>{appointment?.customer?.user?.firstname} - {appointment?.customer?.user?.surname}</td>
+                <td>{appointment.veterinarian.firstname} {appointment.veterinarian.surname}</td>
+                <td>{appointment.customer.firstname} {appointment.customer.surname}</td>
                 <td>{appointment?.animal?.name}</td>
                 <td>{appointment.appointmentDate}</td>
                 <td>{appointment.appointmentTime}</td>

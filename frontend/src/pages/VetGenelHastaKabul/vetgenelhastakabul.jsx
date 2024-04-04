@@ -1,13 +1,15 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState, Fragment} from 'react';
 import axios from 'axios';
-import './VetGenelHastaKabul.css';
+import './vetgenelhastakabul.css';
 import SelectionBar from '@/shared/components/SelectionBar';
 import {Button} from "react-bootstrap";
+import Combobox from "react-widgets/Combobox";
+import {useNavigate} from "react-router-dom";
 
 export default function VetGenelHastaKabul() {
-    const [breeds, setBreeds] = useState([]); // [{ id: 1, name: 'Golden Retriever' }, { id: 2, name: 'Siamese' }, ...
-    const [animalTypes, setAnimalTypes] = useState([]); // [{ id: 1, name: 'Dog' }, { id: 2, name: 'Cat' }, ...
-    const [users, setUsers] = useState([]); // [{ id: 1, name: 'User 1' }, { id: 2, name: 'User 2' }, ...
+    const [breeds, setBreeds] = useState([{ id: 1, name: 'Golden Retriever' }, { id: 2, name: 'Siamese' }, { id: 3, name: 'British'} ],); 
+    const [animalTypes, setAnimalTypes] = useState([{ id: 1, name: 'Dog' }, { id: 2, name: 'Cat' }]);
+    const [users, setUsers] = useState([]); 
     const [animal, setAnimal] = useState({
         name: '',
         type: '',
@@ -21,15 +23,17 @@ export default function VetGenelHastaKabul() {
         ageCategory: '',
         bloodType: '',
         length: 0,
-        owner: '',
+        userId: 0,
     });
 
     const [openModal, setOpenModal] = useState(false);
     const [type, setType] = useState('');
-
+    const navigate=useNavigate();
 
     const handleChange = (e) => {
         const {name, value} = e.target;
+        console.log(name)
+        console.log(value)
         setAnimal((prevAnimal) => ({
             ...prevAnimal,
             [name]: value,
@@ -79,44 +83,37 @@ export default function VetGenelHastaKabul() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        try {
             // Animal nesnesini uygun formata dönüştür
             const formattedAnimal = {
                 name: animal.name,
-                type: {
-                    id: parseInt(animal.type) // Assuming type is a number, adjust accordingly
-                },
+                type: animal.type,
                 gender: animal.gender,
                 birthDate: animal.birthDate,
                 age: parseInt(animal.age),
                 weight: parseFloat(animal.weight),
                 chipNumber: animal.chipNumber,
-                breed: {
-                    id: animal.breed
-                },
+                breed: animal.breed,
                 color: animal.color,
                 ageCategory: animal.ageCategory,
                 bloodType: animal.bloodType,
                 length: parseFloat(animal.length),
-                owner: {
-                    id: parseInt(animal.owner) // Assuming owner is a number, adjust accordingly
-                }
+                userId: animal.userId
             };
 
-            // Animal nesnesini backend'e POST isteği ile JSON formatında gönder
-            const response = await axios.post('http://localhost:8080/api/animals', formattedAnimal, {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
+            console.log(formattedAnimal)
 
-            console.log('Animal kaydedildi:', response.data);
-
-            // Başarılı kayıt durumunda istediğiniz işlemleri gerçekleştirebilirsiniz.
-        } catch (error) {
-            console.error('Animal kaydetme hatası:', error.response || error);
-            // Hata durumunda istediğiniz işlemleri gerçekleştirebilirsiniz.
-        }
+            axios.post("http://localhost:8080/api/animals", formattedAnimal, {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem("token")
+            }})
+                .then(response => {
+                    if (response.status === 200) {
+                        navigate("/vetmainpage")
+                    }
+                })
+                .catch(error => {
+                    console.log(error)
+                })
     };
 
     const closeModal = () => {
@@ -153,24 +150,23 @@ export default function VetGenelHastaKabul() {
                         <input type="text" name="name" value={animal.name} onChange={handleChange} required/>
                     </label>
 
-
-                    <div className='d-flex flex-column'>
+                    <div className='d-flex flex-row'>
                         <label>
-                            Type: </label>
-                        <div className='d-flex flex-row align-items-center justify-content-center'>
-                            <select style={{flex: 1}} name="type" value={animal.type} onChange={handleChange} required>
-
+                            Type:
+                            <select name="type" value={animal.type} onChange={handleChange} required>
                                 <option value="">Select Type</option>
-                                {animalTypes.map((animalType) => (
-                                    <option key={animalType.id} value={animalType.id}>{animalType.animalType}</option>
+                                {animalTypes.map((animal) => (
+                                    <option style={{color: 'black'}} key={animal.id}
+                                            value={animal.name}>{animal.name}</option>
                                 ))}
                             </select>
-                            <div className='flex-lg-row'>
-                                <Button onClick={() => setOpenModal(true)}
-                                        className='d-flex justify-content-center btn btn-sm btn-primary'>
-                                    +
-                                </Button>
-                            </div>
+
+                        </label>
+                        <div className='flex-lg-row'>
+                            <Button onClick={() => setOpenModal(true)}
+                                    className='d-flex justify-content-center btn btn-sm btn-primary'>
+                                +
+                            </Button>
                         </div>
                     </div>
 
@@ -205,13 +201,13 @@ export default function VetGenelHastaKabul() {
                         <input type="text" name="chipNumber" value={animal.chipNumber} onChange={handleChange}
                                required/>
                     </label>
-
                     <label>
                         Breed:
                         <select name="breed" value={animal.breed} onChange={handleChange} required>
-                            <option value="">Select Breed Type</option>
+                            <option value="">Select Type</option>
                             {breeds.map((breed) => (
-                                <option key={breed.id} value={breed.id}>{breed.breedName}</option>
+                                <option style={{color: 'black'}} key={breed.id}
+                                        value={breed.name}>{breed.name}</option>
                             ))}
                         </select>
                     </label>
@@ -253,11 +249,11 @@ export default function VetGenelHastaKabul() {
 
                     <label>
                         Owner:
-                        <select name="owner" value={animal.owner} onChange={handleChange} required>
-                            <option value="">Select Type</option>
+                        <select name="userId" value={animal.userId} onChange={handleChange} required>
+                            <option value={0}>Select Type</option>
                             {users.map((user) => (
                                 <option style={{color: 'black'}} key={user.id}
-                                        value={user.id}>{user.firstname}-{user.surname}</option>
+                                        value={user.id}>{user.firstname} {user.surname}</option>
                             ))}
                         </select>
                     </label>

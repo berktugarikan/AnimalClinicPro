@@ -5,14 +5,18 @@ import {useNavigate} from "react-router-dom";
 
 function AddLabResult() {
     const [result, setNewResult] = useState({
-        type: '',
-        date: '',
-        description: '',
-        veterinarian: '',
+        testDate: '',
+        testDescription: '',
+        veterinarianId: '',
         customer: '',
-        animal: '',
-        status: ''
+        animalId: '',
+        testStatus: ''
     });
+    const statues = [
+        'PENDING',
+        'COMPLETED',
+        'CANCELLED'
+    ];
     const [veterinarians, setVeterinarians] = useState([]);
     const [customers, setCustomers] = useState([]);
     const [animals, setAnimals] = useState([]);
@@ -23,40 +27,71 @@ function AddLabResult() {
     };
 
     const handleCreateResult = async () => {
-        try {
-            console.log('Result:', result)
-            return
-
-            const response = await axios.post('http://localhost:8080/api/veterinarian-users', result);
-            if(response.status === 201){
-                navigate('/vetmainpage')
+        delete result.customer;
+        axios.post("http://localhost:8080/api/lab-tests", result, {
+            headers: "Bearer " + localStorage.getItem("token")
+        })
+        .then(response => {
+            if (response.status === 200) {
+                navigate("/vetmainpage");
             }
-            console.log('Başarılı:', response.data);
-        } catch (error) {
-            console.error('Bir hata oluştu:', error);
-        }
+        })
+        .catch(error => {
+            console.log(error);
+        });
     };
-
     useEffect(() => {
         const fetchVeterinarian = async () => {
-            const response = await axios.get('http://localhost:8080/api/veterinarian-users')
-            setVeterinarians(response.data)
+            axios.get('http://localhost:8080/api/users/vets')
+                .then(response => {
+                    setVeterinarians(response.data);
+                })
+                .catch(error => {
+                    console.log(error);
+                })
         };
 
         const fetchCustomer = async () => {
-            const response = await axios.get('http://localhost:8080/api/customer-users')
-            setCustomers(response.data)
+            axios.get('http://localhost:8080/api/users/customers')
+                .then(response => {
+                    setCustomers(response.data);
+                })
+                .catch(error => {
+                    console.log(error);
+                })
         }
-
-        const fetchAnimal = async () => {
-            const response = await axios.get('http://localhost:8080/api/animals')
-            setAnimals(response.data)
-        }
-
         fetchVeterinarian();
         fetchCustomer();
-        fetchAnimal()
     }, []);
+
+    const handleChangeVeterenerian = (e) => {
+        result.veterinarianId = + e.target.value
+    }
+
+    const handleChangeCustomer = (e) => {
+        const customerId = +e.target.value;
+        axios.get(`http://localhost:8080/api/animals/owner/${customerId}`)
+            .then(response => {
+                setAnimals(response.data);
+                if (response.data.length > 0) {
+                    setNewResult(prevData => ({
+                        ...prevData,
+                        animalId: response.data[0].id
+                    }));
+                }
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    };
+
+    const handleChangeAnimal = (e) => {
+        const animalId = +e.target.value;
+        setNewResult(prevData => ({
+            ...prevData,
+            animalId: animalId
+        }));
+    };
 
     return (
         <div className="container">
@@ -67,83 +102,49 @@ function AddLabResult() {
                     </div>
                     <div className="card-body">
                         <div className="mb-3">
-                            <label htmlFor="id" className="form-label">
-                                Veterinarian:
-                                <select style={{flex: 1}} name="veterinarian" required>
-
-                                    <option value="">Select Veterinarian</option>
-                                    {
-                                        veterinarians.map((veterinarian) => (
-                                            <option key={veterinarian.id} value={veterinarian.id}>{veterinarian.user.firstname} - {veterinarian.user.surname}</option>
-                                        ))
-                                    }
-                                </select>
-                            </label>
+                            <label htmlFor="Veterenerian" className="form-label">Veterenerian</label>
+                            <select name='veterinarianId' onChange={handleChangeVeterenerian}>
+                                {veterinarians.map((item, index) => (
+                                    <option key={index} value={item.id}>{item.firstname} {item.surname}</option>
+                                ))}
+                            </select>
                         </div>
                         <div className="mb-3">
-                            <label htmlFor="id" className="form-label" >
-                                Customer:
-                                <select style={{flex: 1}} name="customer" required>
-
-                                    <option value="">Select Customer</option>
-                                    {
-                                        customers.map((customer) => (
-                                            <option key={customer.id} value={customer.id}>{customer.user.firstname} - {customer.user.surname}</option>
-                                        ))
-                                    }
-                                </select>
-                            </label>
+                            <label htmlFor="Customer" className="form-label">Customer</label>
+                            <select name='customerId' onChange={handleChangeCustomer}>
+                                {customers.map((item, index) => (
+                                    <option key={index} value={item.id}>{item.firstname} {item.surname}</option>
+                                ))}
+                            </select>
                         </div>
                         <div className="mb-3">
-                            <label htmlFor="id" className="form-label">
-                                Animal:
-                                <select style={{flex: 1}} name="animal" required>
-
-                                    <option value="">Select Animal</option>
-                                    {
-                                        animals.map((animals) => (
-                                            <option key={animals.id} value={animals.id}>{animals.user.firstname} - {animals.user.surname}</option>
-                                        ))
-                                    }
-                                </select>
-                            </label>
+                            <label htmlFor="" className="form-label">Animal</label>
+                            <select name='animalId' onChange={handleChangeAnimal}>
+                                {animals.map((item, index) => (
+                                    <option key={index} value={item.id}>{item.name} - ({item.type})</option>
+                                ))}
+                            </select>
                         </div>
                         <div className="mb-3">
-                            <label htmlFor="id" className="form-label">
-                                Test Type:
-                                <select style={{flex: 1}} name="type" required>
-
-                                    <option value="">Select Type</option>
-                                </select>
-                            </label>
+                            <label htmlFor="status" className="form-label">Status</label>
+                            <select name='testStatus' onChange={handleInputChange}>
+                                {statues.map((status, index) => (
+                                    <option key={index} value={status}>{status}</option>
+                                ))}
+                            </select>
                         </div>
                         <div className="mb-3">
-                            <label htmlFor="id" className="form-label">
-                                Status:
-                                <select style={{flex: 1}} name="status" required>
-                                    <option value="">Select Status</option>
-                                </select>
-                            </label>
-                        </div>
-                        <div className="mb-3">
-                            <label htmlFor="id" className="form-label">
-                                Test Date:
-                                <input
-                                    type="date"
-                                    name="date"
-                                    value={result.date}
-                                    onChange={handleInputChange}
-                                    className="form-control"
-                                />
-                            </label>
+                            <label htmlFor="Appointment_Date" className="form-label">Test Date</label>
+                            <input type="date" className="form-control" id="Appointment_Date" name="testDate"
+                                   value={result.testDate} onChange={handleInputChange} required/>
                         </div>
                         <div className="mb-3">
                             <label htmlFor="id" className="form-label">
                                 Description:
                                 <input
                                     type="text"
-                                    name="description"
-                                    value={result.description}
+                                    name="testDescription"
+                                    value={result.testDescription}
                                     onChange={handleInputChange}
                                     className="form-control"
                                 />

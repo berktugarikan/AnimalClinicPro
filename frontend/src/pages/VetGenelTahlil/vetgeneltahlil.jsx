@@ -13,8 +13,13 @@ const VetGenelTahlil = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const response = await axios.get('http://localhost:8080/api/lab-tests')
-            setResults(response.data)
+            axios.get('http://localhost:8080/api/lab-tests')
+                .then(response => {
+                    setResults(response.data);
+                })
+                .catch(error => {
+                    console.log(error);
+                })
         };
         fetchData();
     }, []);
@@ -47,17 +52,15 @@ const VetGenelTahlil = () => {
                                 <th scope='col'>Customer</th>
                                 <th>Animal</th>
                                 <th scope='col'>Test Date</th>
-                                <th scope='col'>Test Type</th>
                                 <th scope='col'>Test Description</th>
                                 <th scope='col'>Test Status</th>
                             </tr>
                             {results.map((result) => (
                                 <tr key={result.id}>
-                                    <td>{result?.veterinarian?.user?.firstname} - {result?.veterinarian?.user?.surname}</td>
-                                    <td>{result?.customer?.user?.firstname} - {result?.customer?.user?.surname}</td>
+                                    <td>{result?.veterinarian?.firstname} - {result?.veterinarian?.surname}</td>
+                                    <td>{result?.customer?.firstname} - {result?.customer?.surname}</td>
                                     <td>{result?.animal?.name}</td>
                                     <td>{result.testDate}</td>
-                                    <td>{result.labTestType.testTypeName}</td>
                                     <td>{result.testDescription}</td>
                                     <td>
                   <span className="badge rounded-pill text-bg-primary">

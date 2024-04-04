@@ -10,7 +10,8 @@ function CreateUser() {
     username: '',
     password: '',
     email: '',
-    phoneNumber: ''
+    phoneNumber: '',
+    role: 'ROLE_CUSTOMER'
   });
   const navigate = useNavigate();
   const handleInputChange = (e) => {
@@ -19,17 +20,15 @@ function CreateUser() {
   };
 
   const handleCreateUser = async () => {
-    try {
-      console.log(newUser)
 
-      const response = await axios.post('http://localhost:8080/api/users', newUser);
-      if(response.status === 201){
+    await axios.post('http://localhost:8080/api/users', newUser)
+          .then(response => {
+      if(response.status === 200){
         navigate('/vetmainpage')
       }
-      console.log('Yeni kullanıcı oluşturuldu:', response.data);
-    } catch (error) {
-      console.error('Kullanıcı oluşturulurken bir hata oluştu:', error);
-    }
+    }).catch(error => {
+      console.log(error);
+        })
   };
 
   return (

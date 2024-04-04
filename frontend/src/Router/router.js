@@ -18,7 +18,7 @@ import VetÇıkış from "@/pages/VetÇıkış/vetçıkış.jsx";
 import VetHasta from "@/pages/VetHasta/vethasta";
 import CreateUser from "@/pages/VetMainPage/createuser";
 import VetFinancial from "@/pages/VetFinancial/vetfinancial.jsx";
-import VetLaboratory from "@/pages/VetLaboratory/vetLaboratory.jsx";
+import VetLaboratory from "@/pages/VetLaboratory/vetlaboratory.jsx";
 import {AddAppointment} from "@/pages/VetGenelMR/addAppointment.jsx";
 import AddLabResult from "@/pages/AddLabResult/addLabResult.jsx";
 import VetGenelArgAdd from "@/pages/VetGenelARG/vetGenelArgAdd.jsx";

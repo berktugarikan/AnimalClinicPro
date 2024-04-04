@@ -1,11 +1,9 @@
-// Login.jsx
 import { useEffect, useState } from "react";
 import { Alert } from "@/shared/components/Alert";
 import { Spinner } from "@/shared/components/Spinner";
 import { Input } from "@/shared/components/Input";
 import { login } from "./api";  // api.js dosyasından import edildi
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 
 export function Login() {
   const [email, setEmail] = useState("");
@@ -45,8 +43,7 @@ export function Login() {
     setApiProgress(true);
 
     try {
-      const response = await login(email, password);
-      console.log(response)
+       await login(email, password);
       onLoginSuccess();
     } catch (error) {
       if (error.response?.data && error.response.data.status === 400) {
@@ -71,7 +68,7 @@ export function Login() {
             <Input
               id="email"
               name="email"
-              label="E-mail:"
+              label="Username:"
               error={errors.email}
               onChange={(event) => setEmail(event.target.value)}
             />
