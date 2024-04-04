@@ -8,8 +8,13 @@ const PaymentHistory = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const response = await axios.get('http://localhost:3000/api/payment-history')
-            setPayments(response.data)
+            axios.get('http://localhost:3000/api/customer-purchase')
+                .then(response=> {
+                    setPayments(response.data)
+                })
+                .catch(error => {
+                    console.log(error);
+                })
         }
         fetchData()
     }, []);
@@ -29,16 +34,14 @@ const PaymentHistory = () => {
                             <th>Payment ID</th>
                             <th>Payment Date</th>
                             <th>Payment Amount</th>
-                            <th>Payment Type</th>
-                            <th>Payment Status</th>
+                            <th>Payment Method</th>
                         </tr>
                         {payments.map((payment) => (
                             <tr key={payment.id}>
                                 <td>{payment.id}</td>
-                                <td>{payment.paymentDate}</td>
+                                <td>{payment.purchaseDate}</td>
                                 <td>{payment.paymentAmount}</td>
-                                <td>{payment.paymentType}</td>
-                                <td>{payment.paymentStatus}</td>
+                                <td>{payment.paymentMethod}</td>
                             </tr>
                         ))}
                         </thead>

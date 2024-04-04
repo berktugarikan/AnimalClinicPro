@@ -7,9 +7,10 @@ function PastVaccineAppointments() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await axios.get('http://localhost:8080/api/appointments')
-      const data = response?.data?.filter(appointment => appointment.appointmentType === 'VACCINATION')
-      setPastVaccineAppointments(data)
+      axios.get("http://localhost:8080/api/vaccinations")
+          .then(response => {
+            setPastVaccineAppointments(response.data)
+          })
     };
     fetchData();
   },[]);
@@ -17,8 +18,7 @@ function PastVaccineAppointments() {
 
   return (
     <div>
-
-      <div>
+      <div className={"p-lg-2"}>
         <table className='table table-responsive'>
           <thead>
           <tr>
@@ -33,16 +33,16 @@ function PastVaccineAppointments() {
           </tr>
           {pastVaccineAppointments.map((appointment) => (
               <tr key={appointment.id}>
-                <td>{appointment?.veterinarian?.user?.firstname} - {appointment?.veterinarian?.user?.surname}</td>
-                <td>{appointment?.customer?.user?.firstname} - {appointment?.customer?.user?.surname}</td>
+                <td>{appointment?.veterinarian?.firstname} {appointment?.veterinarian?.surname}</td>
+                <td>{appointment?.customer.firstname} {appointment?.customer.surname}</td>
                 <td>{appointment?.animal?.name}</td>
-                <td>{appointment.appointmentDate}</td>
-                <td>{appointment.appointmentTime}</td>
-                <td>{appointment.appointmentType}</td>
-                <td>{appointment.appointmentDescription}</td>
+                <td>{appointment.vaccinationDate}</td>
+                <td>{appointment.vaccinationTime}</td>
+                <td>{appointment.vaccinationStatus}</td>
+                <td>{appointment.vaccinationDescription}</td>
                 <td>
                   <span className="badge rounded-pill text-bg-primary">
-                    {appointment.status}
+                    {appointment.vaccinationStatus}
                   </span>
                 </td>
               </tr>

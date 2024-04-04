@@ -88,8 +88,9 @@ function VetMainBar() {
                 </Box>
 
 
-                <Box sx={{flexGrow: 0}}>
-                    <IconButton onClick={handleOpenUserMenu} sx={{p: 0}}>
+                <Box sx={{flexGrow: 0}} className={"text-black p-lg-2"}>
+                    {localStorage.getItem("username")}
+                    <IconButton onClick={handleOpenUserMenu} sx={{p: 0}} className={"p-lg-2"}>
                         <Avatar alt="" src="/static/images/avatar/2.jpg"/>
                     </IconButton>
                     <Menu

@@ -31,11 +31,11 @@ function VetMainPage() {
 }
 
 export default VetMainPage;*/
-import React from 'react';
+import React, {useEffect} from 'react';
 import { useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
-import './VetMainPage.css';
+import './vetmainpage.css';
 import { UserList } from './components/UserList';
 import { VaccineScheduleList } from './components/VaccineScheduleList';
 import {Button} from "react-bootstrap";
@@ -60,6 +60,13 @@ function VetMainPage() {
     email: '',
     phoneNumber: ''
   });
+
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    axios.get("http://localhost:8080/api/users/customers")
+        .then(response => setUsers(response.data))
+  }, []);
 
 
   const handleInputChange = (e) => {
@@ -97,7 +104,6 @@ function VetMainPage() {
     <div className="menu-box">
       <Link to="/addLabResult">Laboratory Result Add</Link>
     </div>
-
       <div className="menu-box">
         <Link to="/VetGenelÖdemeGeçmişi">Payment History</Link>
      </div>

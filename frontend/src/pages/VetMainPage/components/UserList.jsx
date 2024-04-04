@@ -49,14 +49,20 @@ export function UserList() {
   };
 
   const deleteUser = async (userId) => {
-    try {
-      const response = await axios.delete(`http://localhost:8080/api/users/${userId}`);
-      if (response.status === 204) {
-        setUsers(users.filter(user => user.id !== userId));
+    axios.delete(`http://localhost:8080/api/users/${userId}`, {
+      headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem("token")
       }
-    } catch (error) {
-      console.error('Error deleting user:', error);
-    }
+    })
+        .then(response => {
+          if (response.status === 204) {
+            setUsers(users.filter(user => user.id !== userId));
+          }
+        })
+        .catch(error => {
+          console.error('Error deleting user:', error);
+        })
+
   };
 
   const fetchUserData = async (userId) => {
@@ -64,6 +70,7 @@ export function UserList() {
       const response = await axios.get(`http://localhost:8080/api/users/${userId}`);
       setSelectedUserData(response.data);
         setUpdateData(response.data);
+        console.log(response.data);
     } catch (error) {
       console.error('Error fetching user data:', error);
     }
@@ -84,16 +91,17 @@ export function UserList() {
 
 
   const updateUser = async () => {
-
-    try {
-      const response = await axios.put(`http://localhost:8080/api/users/${selectedUserId}`, updateData);
-      if (response.status === 200) {
-        getUsers();
-        closeModal();
-      }
-    } catch (error) {
-      console.error('Error updating user:', error);
-    }
+    const {id, ...updatedUser} = updateData;
+      await axios.put(`http://localhost:8080/api/users/${selectedUserId}`, updatedUser)
+          .then(response => {
+            if (response.status === 200) {
+              getUsers();
+              closeModal();
+            }
+          })
+          .catch(error => {
+            console.error('Error updating user:', error);
+          })
   }
 
   const handleInputChange = (e) => {
@@ -103,6 +111,8 @@ export function UserList() {
       [name]: value
     });
   };
+
+
 
   return (
       <div className="card">

@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import SelectionBar from "@/shared/components/SelectionBar.jsx";
+import {useNavigate} from "react-router-dom";
 
 const appointmentTypes = ['EMERGENCY', 'CHECKUP', 'SURGERY', 'CONSULTATION', 'VACCINATION'];
 const statues = [
@@ -15,34 +16,52 @@ export function AddAppointment() {
     const [veterinarian, setVetenerian] = useState([]);
 
     const [formData, setFormData] = useState({
-        appointmentDate: '',
-        appointmentTime: '',
+        date: '',
+        dateTime: '',
         appointmentType: '',
-        appointmentDescription: '',
-        status: '',
-        animalId: {},
-        customerId: {},
-        veterinarianId: {},
+        description: '',
+        appointmentStatus: '',
+        animalId: 0,
+        customerId: 0,
+        veterinarianId: 0,
     });
+
+    const navigate=useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
-            const responseAnimal = await axios.get('http://localhost:8080/api/animals');
-            const responseCustomer = await axios.get('http://localhost:8080/api/customer-users');
-            const responseVetenerian = await axios.get('http://localhost:8080/api/veterinarian-users');
-
-
-            setAnimal(responseAnimal.data);
-            setCustomer(responseCustomer.data);
-            setVetenerian(responseVetenerian.data);
+            try {
+                const customerResponse = await axios.get("http://localhost:8080/api/users/customers");
+                setCustomer(customerResponse.data);
+                if (customerResponse.data.length > 0) {
+                    setFormData((prevData) => ({
+                        ...prevData,
+                        customerId: customerResponse.data[0].id
+                    }));
+                }
+    
+                const veterinarianResponse = await axios.get("http://localhost:8080/api/users/vets");
+                setVetenerian(veterinarianResponse.data);
+                if (veterinarianResponse.data.length > 0) {
+                    setFormData((prevData) => ({
+                        ...prevData,
+                        veterinarianId: veterinarianResponse.data[0].id
+                    }));
+                }
+            } catch (error) {
+                console.log(error);
+            }
         };
+    
         fetchData();
-    }, [])
+    }, []);
+
+ 
 
     const handleChange = (e) => {
         const {name, value} = e.target;
 
-        if (name === 'appointmentTime') {
+        if (name === 'dateTime') {
             setFormData((prevData) => ({
                 ...prevData,
                 [name]: value + ':00',
@@ -56,18 +75,48 @@ export function AddAppointment() {
 
     };
 
+    const handleChangeCustomer = (e) => {
+        const customerId = +e.target.value;
+        setFormData((prevData) => ({
+            ...prevData,
+            customerId: customerId
+        }));
+        axios.get(`http://localhost:8080/api/animals/owner/${customerId}`)
+            .then(response => {
+                setAnimal(response.data);
+                if (response.data.length > 0) {
+                    setFormData((prevData) => ({
+                        ...prevData,
+                        animalId: response.data[0].id
+                    }));
+                }
+            })
+            .catch(error => {
+                console.log(error);
+            })
+    };
+
+    const handleChangeAnimal = (e) => {
+        formData.animalId = + e.target.value
+    };
+
+    const handleChangeVeterenerian = (e) => {
+        formData.veterinarianId = + e.target.value
+    }
+
     const handleSubmit = async (e) => {
 
-
         e.preventDefault();
-        try {
-            await axios.post('http://localhost:8080/api/appointments', formData);
+        axios.post('http://localhost:8080/api/appointments', formData)
+            .then(response => {
+                if (response.status === 200) {
+                    navigate("/vetmainpage")
+                }
+            })
+            .catch(error => {
+                console.log(error);
+            })
 
-            console.log('Appointment successfully added!');
-        } catch (error) {
-            console.error('Error adding appointment:', error.response || error);
-
-        }
     };
 
     return (
@@ -83,37 +132,37 @@ export function AddAppointment() {
                     <form onSubmit={handleSubmit}>
                         <div className="mb-3">
                             <label htmlFor="Customer" className="form-label">Customer</label>
-                            <select name='customerId' onChange={handleChange}>
+                            <select name='customerId' onChange={handleChangeCustomer}>
                                 {customer.map((item, index) => (
-                                    <option key={index} value={item.id}>{item.user.firstname}</option>
+                                    <option key={index} value={item.id}>{item.firstname} {item.surname}</option>
                                 ))}
                             </select>
                         </div>
                         <div className="mb-3">
                             <label htmlFor="" className="form-label">Animal</label>
-                            <select name='animalId' onChange={handleChange}>
+                            <select name='animalId' onChange={handleChangeAnimal}>
                                 {animal.map((item, index) => (
-                                    <option key={index} value={item.id}>{item.name}</option>
+                                    <option key={index} value={item.id}>{item.name} - ({item.type})</option>
                                 ))}
                             </select>
                         </div>
                         <div className="mb-3">
                             <label htmlFor="Veterenerian" className="form-label">Veterenerian</label>
-                            <select name='veterinarianId' onChange={handleChange}>
+                            <select name='veterinarianId' onChange={handleChangeVeterenerian}>
                                 {veterinarian.map((item, index) => (
-                                    <option key={index} value={item.id}>{item.user.firstname}</option>
+                                    <option key={index} value={item.id}>{item.firstname} {item.surname}</option>
                                 ))}
                             </select>
                         </div>
                         <div className="mb-3">
                             <label htmlFor="Appointment_Date" className="form-label">Appointment Date</label>
-                            <input type="date" className="form-control" id="Appointment_Date" name="appointmentDate"
-                                   value={formData.appointmentDate} onChange={handleChange} required/>
+                            <input type="date" className="form-control" id="Appointment_Date" name="date"
+                                   value={formData.date} onChange={handleChange} required/>
                         </div>
                         <div className="mb-3">
                             <label htmlFor="Appointment_Time" className="form-label">Appointment Time</label>
-                            <input type="time" className="form-control" id="Appointment_Time" name="appointmentTime"
-                                   value={formData.appointmentTime} onChange={handleChange} required/>
+                            <input type="time" className="form-control" id="Appointment_Time" name="dateTime"
+                                   value={formData.dateTime} onChange={handleChange} required/>
                         </div>
                         <div className="mb-3">
                             <label htmlFor="Appointment_Type" className="form-label">Appointment Type</label>
@@ -128,12 +177,12 @@ export function AddAppointment() {
                             <label htmlFor="Appointment_Description" className="form-label">Appointment
                                 Description</label>
                             <input type="text" className="form-control" id="Appointment_Description"
-                                   name="appointmentDescription" value={formData.appointmentDescription}
+                                   name="description" value={formData.description}
                                    onChange={handleChange} required/>
                         </div>
                         <div className="mb-3">
                             <label htmlFor="status" className="form-label">Status</label>
-                            <select name='status' onChange={handleChange}>
+                            <select name='appointmentStatus' onChange={handleChange}>
                                 {statues.map((status, index) => (
                                     <option key={index} value={status}>{status}</option>
                                 ))}
