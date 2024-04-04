@@ -5,10 +5,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "Clinic_Products")
+@Table(name = "Clinic_Product")
 @Data
 public class ClinicProduct {
 
@@ -20,16 +22,35 @@ public class ClinicProduct {
     private String productName;
 
     @Column(name = "Price", nullable = false)
-    private Double price;
+    private Float price;
 
     @Column(name = "Stock_Quantity", nullable = false)
     private Integer stockQuantity;
 
-    @Column(name = "Clinic_ID")
-    private Long clinicId;
-
-    @ManyToOne
-    @JoinColumn(name = "Clinic_ID", referencedColumnName = "ID", insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "Clinic_ID", referencedColumnName = "ID")
     private Clinic clinic;
 
+    @Override
+    public String toString() {
+        return "ClinicProduct{" +
+                "id=" + id +
+                ", productName='" + productName + '\'' +
+                ", price=" + price +
+                ", stockQuantity=" + stockQuantity +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ClinicProduct that = (ClinicProduct) o;
+        return Objects.equals(id, that.id) && Objects.equals(productName, that.productName) && Objects.equals(price, that.price) && Objects.equals(stockQuantity, that.stockQuantity);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, productName, price, stockQuantity);
+    }
 }

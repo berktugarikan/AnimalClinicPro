@@ -1,6 +1,9 @@
 package com.example.AnimalClinicPro.controller;
 
+import com.example.AnimalClinicPro.dto.AnimalDto;
+import com.example.AnimalClinicPro.dto.CreateAnimalRequest;
 import com.example.AnimalClinicPro.entity.Animal;
+import com.example.AnimalClinicPro.entity.User;
 import com.example.AnimalClinicPro.service.AnimalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,42 +24,38 @@ public class AnimalController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Animal>> getAllAnimals() {
-        List<Animal> animals = animalService.getAllAnimals();
-        return new ResponseEntity<>(animals, HttpStatus.OK);
+    public ResponseEntity<List<AnimalDto>> getAllAnimals() {
+        return ResponseEntity.ok(animalService.getAllAnimals());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Animal> getAnimalById(@PathVariable Long id) {
-        Animal animal = animalService.getAnimalById(id);
-        return new ResponseEntity<>(animal, HttpStatus.OK);
+    public ResponseEntity<AnimalDto> getAnimalById(@PathVariable Long id) {
+        return ResponseEntity.ok(animalService.findAnimalById(id));
     }
 
     @GetMapping("/chip/{chipNumber}")
-    public ResponseEntity<Animal> getAnimalByChipNumber(@PathVariable String chipNumber) {
-        Animal animal = animalService.getAnimalByChipNumber(chipNumber);
-        return new ResponseEntity<>(animal, HttpStatus.OK);
+    public ResponseEntity<AnimalDto> getAnimalByChipNumber(@PathVariable String chipNumber) {
+        return ResponseEntity.ok(animalService.getAnimalByChipNumber(chipNumber));
     }
 
-    @GetMapping("/owner/{ownerId}")
-    public ResponseEntity<List<Animal>> getAnimalsByOwnerId(@PathVariable Long ownerId) {
-        List<Animal> animals = animalService.getAnimalsByOwnerId(ownerId);
-        return new ResponseEntity<>(animals, HttpStatus.OK);
+    @GetMapping("/owner/{userId}")
+    public ResponseEntity<List<AnimalDto>> getAnimalsByUserId(@PathVariable Long userId) {
+        return ResponseEntity.ok(animalService.getAnimalsByUserId(userId));
     }
 
     @PostMapping
-    public ResponseEntity<Animal> createAnimal(@RequestBody Animal animal) {
-        Animal createdAnimal = animalService.createAnimal(animal);
-        return new ResponseEntity<>(createdAnimal, HttpStatus.CREATED);
+    public ResponseEntity<AnimalDto> createAnimal(@RequestBody CreateAnimalRequest request) {
+        return ResponseEntity.ok(animalService.createAnimal(request));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Animal> updateAnimal(@PathVariable Long id, @RequestBody Animal animal) {
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<AnimalDto> updateAnimal(@PathVariable Long id, @RequestBody CreateAnimalRequest request) {
+        return ResponseEntity.ok(animalService.updateAnimal(id, request));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAnimal(@PathVariable Long id) {
+        animalService.deleteAnimalById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

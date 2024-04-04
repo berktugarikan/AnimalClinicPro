@@ -1,8 +1,11 @@
 package com.example.AnimalClinicPro.service;
 
+import com.example.AnimalClinicPro.dto.CreateCustomerPurchaseRequest;
+import com.example.AnimalClinicPro.dto.CustomerPurchaseDto;
+import com.example.AnimalClinicPro.entity.ClinicProduct;
 import com.example.AnimalClinicPro.entity.CustomerPurchase;
 import com.example.AnimalClinicPro.repository.CustomerPurchaseRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.AnimalClinicPro.utils.SqlDateConverter;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,26 +13,33 @@ import java.util.List;
 @Service
 public class CustomerPurchaseService {
 
-    private final CustomerPurchaseRepository customerPurchaseRepository;
+    private final CustomerPurchaseRepository repository;
+    private final ClinicProductService clinicProductService;
 
-    @Autowired
-    public CustomerPurchaseService(CustomerPurchaseRepository customerPurchaseRepository) {
-        this.customerPurchaseRepository = customerPurchaseRepository;
+    public CustomerPurchaseService(CustomerPurchaseRepository repository, ClinicProductService clinicProductService) {
+        this.repository = repository;
+        this.clinicProductService = clinicProductService;
     }
 
-    public List<CustomerPurchase> getAllCustomerPurchases() {
-        return customerPurchaseRepository.findAll();
+    public void save(CreateCustomerPurchaseRequest request) {
+        ClinicProduct clinicProductById = clinicProductService.findClinicProductById(request.clinicProductId());
+
+        CustomerPurchase customerPurchase = new CustomerPurchase();
+        customerPurchase.setClinicProduct(clinicProductById);
+        customerPurchase.setQuantity(request.quantity());
+        customerPurchase.setTotalPrice(request.totalPrice());
+        customerPurchase.setPaymentDate(SqlDateConverter.convert(request.paymentDate()));
+        customerPurchase.setPurchaseDate(SqlDateConverter.convert(request.purchaseDate()));
+        customerPurchase.setPaymentAmount(request.paymentAmount());
+        customerPurchase.setPaymentMethod(request.paymentMethod());
+
+        repository.save(customerPurchase);
     }
 
-    public List<CustomerPurchase> getCustomerPurchasesByCustomerId(Long customerId) {
-        return customerPurchaseRepository.findByCustomerId(customerId);
-    }
-
-    public CustomerPurchase createCustomerPurchase(CustomerPurchase customerPurchase) {
-        return customerPurchaseRepository.save(customerPurchase);
-    }
-
-    public void deleteCustomerPurchase(Long id) {
-        customerPurchaseRepository.deleteById(id);
+    public List<CustomerPurchaseDto> findAll() {
+        return repository.findAll()
+                .stream()
+                .map(CustomerPurchaseDto::convert)
+                .toList();
     }
 }

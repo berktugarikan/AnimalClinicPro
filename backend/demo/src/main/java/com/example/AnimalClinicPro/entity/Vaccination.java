@@ -4,12 +4,16 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.sql.Date;
-    @AllArgsConstructor
+import java.util.Objects;
+
+@AllArgsConstructor
     @NoArgsConstructor
     @Entity
-    @Table(name = "Vaccinations")
+    @Table(name = "Vaccination")
     @Data
     public class Vaccination {
 
@@ -17,45 +21,55 @@ import java.sql.Date;
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
 
-        @Column(name = "Animal_ID")
-        private Long animalId;
-
-        @ManyToOne
-        @JoinColumn(name = "Animal_ID", referencedColumnName = "ID", insertable = false, updatable = false)
+        @ManyToOne(fetch = FetchType.EAGER)
+        @JoinColumn(name = "Animal_ID", referencedColumnName = "ID")
+        @OnDelete(action = OnDeleteAction.CASCADE)
         private Animal animal;
 
-        @Column(name = "Vaccination_Type_ID")
-        private Long vaccinationTypeId;
-
-        @ManyToOne
-        @JoinColumn(name = "Vaccination_Type_ID", referencedColumnName = "ID", insertable = false, updatable = false)
-        private VaccinationType vaccinationType;
-
         @Column(name = "Vaccination_Date", nullable = false)
-        private Date vaccinationDate;
+        @Temporal(TemporalType.DATE)
+        private java.sql.Date vaccinationDate;
 
+        @Column(name = "Vaccination_Time", nullable = false)
+        @Temporal(TemporalType.TIME)
+        private java.sql.Time vaccinationTime;
+
+        @Column(name = "Vaccination_Status", nullable = false)
         @Enumerated(EnumType.STRING)
-        @Column(name = "Vaccination_Status", nullable = false, columnDefinition = "VARCHAR(20) DEFAULT 'PENDING'")
         private VaccinationStatus vaccinationStatus;
 
         @Column(name = "Vaccination_Description", columnDefinition = "TEXT")
         private String vaccinationDescription;
 
-        @Column(name = "Veterinarian_ID")
+         @Column(name = "Veterinarian_ID", nullable = false)
         private Long veterinarianId;
 
-        @ManyToOne
-        @JoinColumn(name = "Veterinarian_ID", referencedColumnName = "ID", insertable = false, updatable = false)
-        private VeterinarianUser veterinarian;
+        @Override
+        public String toString() {
+            return "Vaccination{" +
+                    "id=" + id +
+                    ", animal=" + animal +
+                    ", vaccinationDate=" + vaccinationDate +
+                    ", vaccinationTime=" + vaccinationTime +
+                    ", vaccinationStatus=" + vaccinationStatus +
+                    ", vaccinationDescription='" + vaccinationDescription + '\'' +
+                    '}';
+        }
 
-        @Column(name = "Customer_ID")
-        private Long customerId;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Vaccination that = (Vaccination) o;
+        return Objects.equals(id, that.id) && Objects.equals(animal, that.animal) && Objects.equals(vaccinationDate, that.vaccinationDate) && Objects.equals(vaccinationTime, that.vaccinationTime) && vaccinationStatus == that.vaccinationStatus && Objects.equals(vaccinationDescription, that.vaccinationDescription);
+    }
 
-        @ManyToOne
-        @JoinColumn(name = "Customer_ID", referencedColumnName = "ID", insertable = false, updatable = false)
-        private CustomerUser customer;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, animal, vaccinationDate, vaccinationTime, vaccinationStatus, vaccinationDescription);
+    }
 
-        public enum VaccinationStatus {
+    public enum VaccinationStatus {
             PENDING,
             COMPLETED,
             CANCELLED
