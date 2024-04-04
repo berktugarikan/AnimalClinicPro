@@ -5,13 +5,17 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.sql.Time;
 import java.sql.Date;
+import java.util.Objects;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "Appointments")
+@Table(name = "Appointment")
 @Data
 public class Appointment {
 
@@ -19,43 +23,60 @@ public class Appointment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "Customer_ID")
-    private Long customerId;
-
-    @ManyToOne
-    @JoinColumn(name = "Customer_ID", referencedColumnName = "ID", insertable = false, updatable = false)
-    private CustomerUser customer;
-
-    @Column(name = "Veterinarian_ID")
-    private Long veterinarianId;
-
-    @ManyToOne
-    @JoinColumn(name = "Veterinarian_ID", referencedColumnName = "ID", insertable = false, updatable = false)
-    private VeterinarianUser veterinarian;
-
-    @Column(name = "Animal_ID")
-    private Long animalId;
-
-    @ManyToOne
-    @JoinColumn(name = "Animal_ID", referencedColumnName = "ID", insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "Animal_ID", referencedColumnName = "ID")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Animal animal;
 
     @Column(name = "Appointment_Date", nullable = false)
-    private Date appointmentDate;
+    @Temporal(TemporalType.DATE)
+    private java.sql.Date appointmentDate;
 
     @Column(name = "Appointment_Time", nullable = false)
-    private Time appointmentTime;
+    @Temporal(TemporalType.TIME)
+    private java.sql.Time appointmentTime;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "Appointment_Type", nullable = false)
+    @Enumerated(EnumType.STRING)
     private AppointmentType appointmentType;
 
     @Column(name = "Appointment_Description", columnDefinition = "TEXT")
     private String appointmentDescription;
 
+    @Column(name = "Status", nullable = false)
     @Enumerated(EnumType.STRING)
-    @Column(name = "Status", nullable = false, columnDefinition = "VARCHAR(20) DEFAULT 'PENDING'")
     private AppointmentStatus status;
+    @Column(name = "Customer_ID", nullable = false)
+    private Long customerId;
+    @Column(name = "Veterinarian_ID", nullable = false)
+    private Long veterinarianId;
+
+    @Override
+    public String toString() {
+        return "Appointment{" +
+                "id=" + id +
+                ", appointmentDate=" + appointmentDate +
+                ", appointmentTime=" + appointmentTime +
+                ", appointmentType=" + appointmentType +
+                ", appointmentDescription='" + appointmentDescription + '\'' +
+                ", status=" + status +
+                ", customerId=" + customerId +
+                ", veterinarianId=" + veterinarianId +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Appointment that = (Appointment) o;
+        return Objects.equals(id, that.id) && Objects.equals(appointmentDate, that.appointmentDate) && Objects.equals(appointmentTime, that.appointmentTime) && appointmentType == that.appointmentType && Objects.equals(appointmentDescription, that.appointmentDescription) && status == that.status && Objects.equals(customerId, that.customerId) && Objects.equals(veterinarianId, that.veterinarianId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, appointmentDate, appointmentTime, appointmentType, appointmentDescription, status, customerId, veterinarianId);
+    }
 
     public enum AppointmentType {
         CHECKUP,

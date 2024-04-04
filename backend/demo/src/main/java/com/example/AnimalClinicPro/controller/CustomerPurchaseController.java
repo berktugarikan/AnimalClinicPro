@@ -1,10 +1,10 @@
 package com.example.AnimalClinicPro.controller;
 
-import com.example.AnimalClinicPro.entity.CustomerPurchase;
+import com.example.AnimalClinicPro.dto.CreateCustomerPurchaseRequest;
+import com.example.AnimalClinicPro.dto.CustomerPurchaseDto;
 import com.example.AnimalClinicPro.service.CustomerPurchaseService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,32 +15,19 @@ public class CustomerPurchaseController {
 
     private final CustomerPurchaseService customerPurchaseService;
 
-    @Autowired
     public CustomerPurchaseController(CustomerPurchaseService customerPurchaseService) {
         this.customerPurchaseService = customerPurchaseService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<CustomerPurchase>> getAllCustomerPurchases() {
-        List<CustomerPurchase> customerPurchases = customerPurchaseService.getAllCustomerPurchases();
-        return new ResponseEntity<>(customerPurchases, HttpStatus.OK);
-    }
-
-    @GetMapping("/customer/{customerId}")
-    public ResponseEntity<List<CustomerPurchase>> getCustomerPurchasesByCustomerId(@PathVariable Long customerId) {
-        List<CustomerPurchase> customerPurchases = customerPurchaseService.getCustomerPurchasesByCustomerId(customerId);
-        return new ResponseEntity<>(customerPurchases, HttpStatus.OK);
-    }
-
     @PostMapping
-    public ResponseEntity<CustomerPurchase> createCustomerPurchase(@RequestBody CustomerPurchase customerPurchase) {
-        CustomerPurchase createdCustomerPurchase = customerPurchaseService.createCustomerPurchase(customerPurchase);
-        return new ResponseEntity<>(createdCustomerPurchase, HttpStatus.CREATED);
+    public ResponseEntity<Void> save(@RequestBody CreateCustomerPurchaseRequest request) {
+        customerPurchaseService.save(request);
+        return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCustomerPurchase(@PathVariable Long id) {
-        customerPurchaseService.deleteCustomerPurchase(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @GetMapping
+    public ResponseEntity<List<CustomerPurchaseDto>> findAll() {
+        return ResponseEntity.ok(customerPurchaseService.findAll());
     }
+
 }

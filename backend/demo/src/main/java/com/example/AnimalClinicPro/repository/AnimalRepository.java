@@ -8,9 +8,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 @Repository
 public interface AnimalRepository extends JpaRepository<Animal,Long> {
-    Animal findAnimalById(Long id);
-    List<Animal> findAnimalByOwner_Id(Long ownerId);
+    List<Animal> findAnimalByUserId(Long userId);
     Animal findAnimalByChipNumber(String chipNumber);
-    List<Animal> findAll();
+
+    void deleteAnimalById(Long id);
+
+
 
 }

@@ -3,14 +3,18 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Objects;
+import java.util.Set;
 
 @AllArgsConstructor
     @NoArgsConstructor
     @Entity
-    @Table(name = "Users")
+    @Table(name = "User")
     @Data
-@Getter
-@Setter
+    @Getter
+    @Setter
     public class User {
 
         @Id
@@ -35,12 +39,45 @@ import org.hibernate.annotations.OnDeleteAction;
         @Column(name = "Phone_Number", unique = true, nullable = false)
         private String phoneNumber;
 
+        @Column(name = "Role", nullable = false)
+        @Enumerated(EnumType.STRING)
+        private Role role;
+
         @ManyToOne(fetch = FetchType.EAGER)
-        @JoinColumn(name = "Authorization_ID", referencedColumnName = "ID")
+        @JoinColumn(name = "Clinic_ID", referencedColumnName = "ID")
         @OnDelete(action = OnDeleteAction.SET_NULL)
-        private Permission authorization;
+        private Clinic clinic;
 
+        @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+        private Set<Animal> animals;
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", firstname='" + firstname + '\'' +
+                ", surname='" + surname + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", role=" + role +
+                ", clinic=" + clinic +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id) && Objects.equals(firstname, user.firstname) && Objects.equals(surname, user.surname) && Objects.equals(username, user.username) && Objects.equals(password, user.password) && Objects.equals(email, user.email) && Objects.equals(phoneNumber, user.phoneNumber) && role == user.role;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, firstname, surname, username, password, email, phoneNumber, role);
+    }
 
 
 }

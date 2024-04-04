@@ -4,12 +4,16 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.sql.Date;
+import java.util.Objects;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "Lab_Tests")
+@Table(name = "Lab_Test")
 @Data
 public class LabTest {
 
@@ -17,43 +21,48 @@ public class LabTest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "Animal_ID")
-    private Long animalId;
-
-    @ManyToOne
-    @JoinColumn(name = "Animal_ID", referencedColumnName = "ID", insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "Animal_ID", referencedColumnName = "ID")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Animal animal;
 
-    @Column(name = "Test_Type_ID")
-    private Long testTypeId;
-
-    @ManyToOne
-    @JoinColumn(name = "Test_Type_ID", referencedColumnName = "ID", insertable = false, updatable = false)
-    private LabTestType labTestType;
-
     @Column(name = "Test_Date", nullable = false)
-    private Date testDate;
+    @Temporal(TemporalType.DATE)
+    private java.sql.Date testDate;
 
+    @Column(name = "Test_Status", nullable = false)
     @Enumerated(EnumType.STRING)
-    @Column(name = "Test_Status", nullable = false, columnDefinition = "VARCHAR(20) DEFAULT 'PENDING'")
     private TestStatus testStatus;
 
     @Column(name = "Test_Description", columnDefinition = "TEXT")
     private String testDescription;
 
-    @Column(name = "Veterinarian_ID")
+    @Column(name = "Veterinarian_ID", nullable = false)
     private Long veterinarianId;
 
-    @ManyToOne
-    @JoinColumn(name = "Veterinarian_ID", referencedColumnName = "ID", insertable = false, updatable = false)
-    private VeterinarianUser veterinarian;
 
-    @Column(name = "Customer_ID")
-    private Long customerId;
+    @Override
+    public String toString() {
+        return "LabTest{" +
+                "id=" + id +
+                ", testDate=" + testDate +
+                ", testStatus=" + testStatus +
+                ", testDescription='" + testDescription + '\'' +
+                '}';
+    }
 
-    @ManyToOne
-    @JoinColumn(name = "Customer_ID", referencedColumnName = "ID", insertable = false, updatable = false)
-    private CustomerUser customer;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        LabTest labTest = (LabTest) o;
+        return Objects.equals(id, labTest.id) && Objects.equals(testDate, labTest.testDate) && testStatus == labTest.testStatus && Objects.equals(testDescription, labTest.testDescription);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, testDate, testStatus, testDescription);
+    }
 
     public enum TestStatus {
         PENDING,

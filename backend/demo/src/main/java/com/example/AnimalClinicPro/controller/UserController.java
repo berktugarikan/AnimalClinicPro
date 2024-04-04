@@ -1,5 +1,9 @@
 package com.example.AnimalClinicPro.controller;
 
+import com.example.AnimalClinicPro.dto.CreateUserRequest;
+import com.example.AnimalClinicPro.dto.CreateVeterinarianRequest;
+import com.example.AnimalClinicPro.dto.UpdateUserRequest;
+import com.example.AnimalClinicPro.dto.UserDto;
 import com.example.AnimalClinicPro.entity.User;
 import com.example.AnimalClinicPro.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,39 +25,48 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.getAllUsers();
-        return new ResponseEntity<>(users, HttpStatus.OK);
+    public ResponseEntity<List<UserDto>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+    @GetMapping("/customers")
+    public ResponseEntity<List<UserDto>> getAllCustomers() {
+        return ResponseEntity.ok(userService.findUsersByCustomer());
+    }
+
+    @GetMapping("/vets")
+    public ResponseEntity<List<UserDto>> getAllVets() {
+        return ResponseEntity.ok(userService.findUsersByVeterinarian());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        User user = userService.getUserById(id);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+    public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.findUserById(id));
     }
 
     @GetMapping("/username/{username}")
-    public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
-        User user = userService.getUserByUsername(username);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+    public ResponseEntity<UserDto> getUserByUsername(@PathVariable String username) {
+        return ResponseEntity.ok(userService.getUserByUsername(username));
     }
 
     @GetMapping("/phone/{phoneNumber}")
-    public ResponseEntity<User> getUserByPhoneNumber(@PathVariable String phoneNumber) {
-        User user = userService.getUserByPhoneNumber(phoneNumber);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+    public ResponseEntity<UserDto> getUserByPhoneNumber(@PathVariable String phoneNumber) {
+        return ResponseEntity.ok(userService.getUserByPhoneNumber(phoneNumber));
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        User createdUser = userService.createUser(user);
-        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+    public ResponseEntity<UserDto> createUser(@RequestBody CreateUserRequest request) {
+        return ResponseEntity.ok(userService.createUser(request));
+    }
+
+    @PostMapping("/veterinarian")
+    public ResponseEntity<UserDto> createVeterinarian(@RequestBody CreateVeterinarianRequest request) {
+        return ResponseEntity.ok(userService.createVeterinarian(request));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
-        User updatedUser = userService.updateUser(id, user);
-        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UpdateUserRequest request) {
+        return ResponseEntity.ok(userService.updateUser(id, request));
     }
 
     @DeleteMapping("/{id}")

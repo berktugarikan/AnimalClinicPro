@@ -1,13 +1,11 @@
 package com.example.AnimalClinicPro.repository;
 
-
 import com.example.AnimalClinicPro.entity.ClinicProduct;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.Optional;
 
-@Repository
 public interface ClinicProductRepository extends JpaRepository<ClinicProduct, Long> {
-    List<ClinicProduct> findByClinicId(Long clinicId);// Kliniğe ait productları listeler
+
+    Optional<ClinicProduct> findByProductName(String productName);
 }

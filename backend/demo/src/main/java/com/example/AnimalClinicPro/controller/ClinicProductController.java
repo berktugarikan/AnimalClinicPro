@@ -1,13 +1,10 @@
 package com.example.AnimalClinicPro.controller;
 
-import com.example.AnimalClinicPro.entity.ClinicProduct;
+import com.example.AnimalClinicPro.dto.ClinicProductDto;
+import com.example.AnimalClinicPro.dto.CreateClinicProductRequest;
 import com.example.AnimalClinicPro.service.ClinicProductService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/clinic-products")
@@ -15,32 +12,33 @@ public class ClinicProductController {
 
     private final ClinicProductService clinicProductService;
 
-    @Autowired
     public ClinicProductController(ClinicProductService clinicProductService) {
         this.clinicProductService = clinicProductService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<ClinicProduct>> getAllClinicProducts() {
-        List<ClinicProduct> clinicProducts = clinicProductService.getAllClinicProducts();
-        return new ResponseEntity<>(clinicProducts, HttpStatus.OK);
-    }
-
-    @GetMapping("/clinic/{clinicId}")
-    public ResponseEntity<List<ClinicProduct>> getClinicProductsByClinicId(@PathVariable Long clinicId) {
-        List<ClinicProduct> clinicProducts = clinicProductService.getClinicProductsByClinicId(clinicId);
-        return new ResponseEntity<>(clinicProducts, HttpStatus.OK);
-    }
-
     @PostMapping
-    public ResponseEntity<ClinicProduct> createClinicProduct(@RequestBody ClinicProduct clinicProduct) {
-        ClinicProduct createdClinicProduct = clinicProductService.createClinicProduct(clinicProduct);
-        return new ResponseEntity<>(createdClinicProduct, HttpStatus.CREATED);
+    public ResponseEntity<ClinicProductDto> createClinicProduct(CreateClinicProductRequest request) {
+        return ResponseEntity.ok(clinicProductService.createClinicProduct(request));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ClinicProductDto> getClinicProductById(@PathVariable Long id) {
+        return ResponseEntity.ok(clinicProductService.getClinicProductById(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ClinicProductDto> updateClinicProduct(@PathVariable Long id, @RequestBody CreateClinicProductRequest request) {
+        return ResponseEntity.ok(clinicProductService.updateClinicProduct(id, request));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteClinicProduct(@PathVariable Long id) {
         clinicProductService.deleteClinicProduct(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/product-name/{name}")
+    public ResponseEntity<ClinicProductDto> getClinicProductByName(@PathVariable String name) {
+        return ResponseEntity.ok(clinicProductService.findClinicProductByProductName(name));
     }
 }

@@ -1,5 +1,6 @@
 package com.example.AnimalClinicPro.controller;
-
+import com.example.AnimalClinicPro.dto.ClinicDto;
+import com.example.AnimalClinicPro.dto.CreateClinicRequest;
 import com.example.AnimalClinicPro.entity.Clinic;
 import com.example.AnimalClinicPro.service.ClinicService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/clinics")
 public class ClinicController {
-
     private final ClinicService clinicService;
 
     @Autowired
@@ -21,27 +21,24 @@ public class ClinicController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Clinic>> getAllClinics() {
-        List<Clinic> clinics = clinicService.getAllClinics();
-        return new ResponseEntity<>(clinics, HttpStatus.OK);
+    public ResponseEntity<List<ClinicDto>> getAllClinics() {
+        return ResponseEntity.ok(clinicService.getAllClinics());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Clinic> getClinicById(@PathVariable Long id) {
-        Clinic clinic = clinicService.getClinicById(id);
-        return new ResponseEntity<>(clinic, HttpStatus.OK);
+    public ResponseEntity<ClinicDto> getClinicById(@PathVariable Long id) {
+        return ResponseEntity.ok(clinicService.getClinicById(id));
     }
 
     @GetMapping("/name/{clinicName}")
-    public ResponseEntity<Clinic> getClinicByClinicName(@PathVariable String clinicName) {
-        Clinic clinic = clinicService.getClinicByClinicName(clinicName);
-        return new ResponseEntity<>(clinic, HttpStatus.OK);
+    public ResponseEntity<ClinicDto> getClinicByClinicName(@PathVariable String clinicName) {
+        return ResponseEntity.ok(clinicService.getClinicByClinicName(clinicName));
     }
 
     @PostMapping
-    public ResponseEntity<Clinic> createClinic(@RequestBody Clinic clinic) {
-        Clinic createdClinic = clinicService.createClinic(clinic);
-        return new ResponseEntity<>(createdClinic, HttpStatus.CREATED);
+    public ResponseEntity<Void> createClinic(@RequestBody CreateClinicRequest request) {
+        clinicService.createClinic(request);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
