@@ -3,7 +3,7 @@ import axios from 'axios';
 import './vetgenelhastakabul.css';
 import SelectionBar from '@/shared/components/SelectionBar';
 import {Button} from "react-bootstrap";
-import Combobox from "react-widgets/Combobox";
+//import Combobox from "react-widgets/Combobox";
 import {useNavigate} from "react-router-dom";
 
 export default function VetGenelHastaKabul() {

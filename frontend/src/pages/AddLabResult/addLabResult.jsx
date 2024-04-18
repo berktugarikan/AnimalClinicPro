@@ -65,7 +65,11 @@ function AddLabResult() {
     }, []);
 
     const handleChangeVeterenerian = (e) => {
-        result.veterinarianId = + e.target.value
+        const vetId = parseInt(e.target.value);
+        setNewResult(prevData => ({
+            ...prevData,
+            veterinarianId: vetId
+        }));
     }
 
     const handleChangeCustomer = (e) => {
