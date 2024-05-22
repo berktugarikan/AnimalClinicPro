@@ -1,27 +1,30 @@
-import {createBrowserRouter  } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 import App from "../App";
-import HomePage  from "@/pages/HomePage/homepage";
-import  SignUp  from "@/pages/SignUp/signup";
-import VetMainPage from "@/pages/VetMainPage/vetmainpage.jsx";
-import VetGenelHastaKabul from "@/pages/VetGenelHastaKabul/vetgenelhastakabul.jsx";
-import VetGenelMR from "@/pages/VetGenelMR/vetgenelmr.jsx";
-import VetGenelMRG from "@/pages/VetGenelMRG/vetgenelmrg.jsx";
-import VetGenelAR from "@/pages/VetGenelAR/vetgenelar.jsx";
-import VetGenelARG from "@/pages/VetGenelARG/vetgenelarg.jsx";
-import VetGenelTahlil from "@/pages/VetGenelTahlil/vetgeneltahlil.jsx";
-import VetGenelÖdemeGeçmişi from "@/pages/VetGenelÖdemeGeçmişi/vetgenelödemegeçmişi.jsx";
-import {Login} from "@/pages/Login/login.jsx";
-import { Activation } from "@/pages/Activation/Activation.jsx";
-import VetProfilBilgileri from "@/pages/VetProfilBilgileri/vetprofilbilgileri.jsx";
-import VetŞifreDeğiştirme from "@/pages/VetŞifreDeğiştirme/vetşifredeğiştirme.jsx";
-import VetÇıkış from "@/pages/VetÇıkış/vetçıkış.jsx";
-import VetHasta from "@/pages/VetHasta/vethasta";
-import CreateUser from "@/pages/VetMainPage/createuser";
-import VetFinancial from "@/pages/VetFinancial/vetfinancial.jsx";
-import VetLaboratory from "@/pages/VetLaboratory/vetlaboratory.jsx";
-import {AddAppointment} from "@/pages/VetGenelMR/addAppointment.jsx";
-import AddLabResult from "@/pages/AddLabResult/addLabResult.jsx";
-import VetGenelArgAdd from "@/pages/VetGenelARG/vetGenelArgAdd.jsx";
+import { Activation } from "../pages/Activation/Activation.jsx";
+import AddLabResult from "../pages/AddLabResult/addLabResult.jsx";
+import HomePage from "../pages/HomePage/homepage";
+import { Login } from "../pages/Login/login.jsx";
+import SignUp from "../pages/SignUp/signup";
+import VetFinancial from "../pages/VetFinancial/vetfinancial.jsx";
+import VetGenelAR from "../pages/VetGenelAR/vetgenelar.jsx";
+import VetGenelArgAdd from "../pages/VetGenelARG/vetGenelArgAdd.jsx";
+import VetGenelARG from "../pages/VetGenelARG/vetgenelarg.jsx";
+import VetGenelHastaKabul from "../pages/VetGenelHastaKabul/vetgenelhastakabul.jsx";
+import { AddAppointment } from "../pages/VetGenelMR/addAppointment.jsx";
+import VetGenelMR from "../pages/VetGenelMR/vetgenelmr.jsx";
+import VetGenelMRG from "../pages/VetGenelMRG/vetgenelmrg.jsx";
+import VetGenelTahlil from "../pages/VetGenelTahlil/vetgeneltahlil.jsx";
+// import VetGenelÖdemeGeçmişi from "../pages/VetGenelÖdemeGeçmişi/vetgenelödemegeçmişi.jsx";
+import PaymentHistory from "../pages/VetGenelÖdemeGeçmiƒi/vetgenelödemegeçmiƒi";
+import VetHasta from "../pages/VetHasta/vethasta";
+import VetLaboratory from "../pages/VetLaboratory/vetlaboratory.jsx";
+import CreateUser from "../pages/VetMainPage/createuser";
+import VetMainPage from "../pages/VetMainPage/vetmainpage.jsx";
+import VetProfilBilgileri from "../pages/VetProfilBilgileri/vetprofilbilgileri.jsx";
+import Layout from "@/shared/components/Layout";
+import VetÇıkış from "../pages/VetÇìkìƒ/vetçìkìƒ";
+import VetŞifreDeğiştirme from "../pages/Vet₧ifreDeºiƒtirme/vetƒifredeºiƒtirme";
+import Payment from "@/pages/Payment/Payment";
 
 
 
@@ -53,6 +56,13 @@ export default createBrowserRouter([
                 path: "/login",
                 Component:Login,
             },
+
+        ]
+    },
+    {
+        path: "/",
+        Component: Layout,
+        children: [
             {
                 path:"/vetmainpage",
                 Component: VetMainPage,
@@ -99,12 +109,12 @@ export default createBrowserRouter([
             },
             {
                 path:"/vetgenelödemegeçmişi",
-                Component: VetGenelÖdemeGeçmişi,
+                Component: PaymentHistory,
             },
-            /*{
-                path:"/vetgeneral",
-                Component: VetGeneral,
-            },*/
+            // {
+            //     path:"/vetgeneral",
+            //     Component: VetGeneral,
+            // },
             {
                 path:"/vethasta",
                 Component: VetHasta,
@@ -126,10 +136,13 @@ export default createBrowserRouter([
                 Component: VetŞifreDeğiştirme,
               },
               {
-                path: "/vetçıkış",
-                Component: VetÇıkış,
+                path: "/payment",
+                Component: Payment,
               },
-
+            //   {
+            //     path: "/vetçıkış",
+            //     Component: VetÇıkış,
+            //   },
         ]
     }
 ])

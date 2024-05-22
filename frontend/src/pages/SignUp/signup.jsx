@@ -13,7 +13,8 @@ const SignUp = () => {
         permission: {
             id: 1,
             permissionName: 'ADMIN'
-        }
+        },
+        role: 'ROLE_VETERINARIAN'
     });
 
     const handleChange = (e) => {

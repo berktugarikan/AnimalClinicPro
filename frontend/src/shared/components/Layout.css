@@ -1,0 +1,18 @@
+.layout-container {
+    /* General styles for the layout container */
+    display: flex;
+    /* Makes the container a flexbox for potential layout adjustments */
+    flex-direction: row;
+    gap: 50px;
+    /* padding: 5px; */
+    margin: auto;
+    /* background: violet; */
+    width: 85%; /* Default width for all devices */
+  }
+  
+  @media (max-width: 768px) {
+    /* Target screens with max-width 768px (adjust breakpoint as needed) */
+    .layout-container {
+      width: 100%;  /* Set width to 100% for small devices */
+    }
+  }

@@ -1,5 +1,4 @@
 import React from 'react';
-import SelectionBar from '@/shared/components/SelectionBar';
 import PastVaccineAppointments  from '../VetMainPage/components/PastVaccineAppointments';
 
 const containerStyle = {
@@ -20,7 +19,7 @@ function VetGenelARG() {
     <div>
       <h1>Veterinary Vaccine Appointments History</h1>
       <div style={containerStyle}>
-        <SelectionBar style={selectionBarStyle} />
+
         <PastVaccineAppointments style ={pastVaccineAppointmentsStyle} />
       </div>
     </div>

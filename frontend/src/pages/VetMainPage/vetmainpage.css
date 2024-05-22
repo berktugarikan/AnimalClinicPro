@@ -2,10 +2,12 @@
 
 .main-container {
   display: flex;
+  width: 100%;
 }
 
 .left-menu {
-  width: 250px; /* Sol menünün genişliği */
+  width: 250px;
+  /* Sol menünün genişliği */
   padding: 20px;
   border-right: 1px solid #ddd;
   text-decoration: none;
@@ -17,21 +19,22 @@
   padding: 10px;
   margin-bottom: 10px;
   border-radius: 8px;
- 
+
 }
 
-.menu-box a{
-  text-decoration:none;
+.menu-box a {
+  text-decoration: none;
 }
 
 .right-content {
-  flex: 1; /* Sağ sütunun genişliği */
+  flex: 1;
+  /* Sağ sütunun genişliği */
   padding: 20px;
 
 }
 
-.right-content h1{
-  color:#6c9286;
+.right-content h1 {
+  color: #6c9286;
 }
 
 .customer-card {
@@ -52,16 +55,17 @@
 }
 
 .custom-btn {
-	background-color: #6c9286; /* İstediğiniz rengi burada belirtin */
-	color: #c3dfd6 ; /* İstediğiniz metin rengini burada belirtin */
-	/* Diğer özel stillendirmeleri buraya ekleyebilirsiniz */
-  }
+  background-color: #6c9286;
+  /* İstediğiniz rengi burada belirtin */
+  color: #c3dfd6;
+  /* İstediğiniz metin rengini burada belirtin */
+  /* Diğer özel stillendirmeleri buraya ekleyebilirsiniz */
+}
 
-  .card-footer{
-    background: 'white';
-    }
+.card-footer {
+  background: 'white';
+}
 
-    .list-group{
-      background-color: #c3dfd6;
-    }
-  
+.list-group {
+  background-color: #c3dfd6;
+}

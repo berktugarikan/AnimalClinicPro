@@ -4,38 +4,66 @@ import axios from "axios";
 
 function PastVaccineAppointments() {
   const [pastAppointments, setPastAppointments] = useState([]);
-  const [userId, setUserId] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
 
     const fetchData = async () => {
-        axios.get("http://localhost:8080/api/appointments")
-            .then(response => {
-                setPastAppointments(response.data)
-            })
-            .catch(error => {
-                console.log(error);
-            })
+      axios.get("http://localhost:8080/api/appointments")
+        .then(response => {
+          if (response.data.length > 0) {
+            const reversedAppointments = response.data.reverse();
+            setPastAppointments(reversedAppointments)
+          }
+        })
+        .catch(error => {
+          console.log(error);
+        })
     };
     fetchData();
   }, []);
 
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredAppoinments = pastAppointments.filter(
+    (appointment) =>
+      appointment?.customer?.firstname?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      appointment?.customer?.surname?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      appointment?.customer?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      appointment?.animal?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      appointment?.veterinarian?.firstname.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      appointment?.veterinarian?.surname.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+
   return (
     <div>
+      <input
+        type="text"
+        placeholder="Search Name"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        style={{ width: '185px', height: '30px', padding: '5px', fontSize: '15px' }}
+      />
       <table className='table table-responsive'>
         <thead>
-            <tr>
-                <th>Veterinarian</th>
-                <th scope='col'>Customer</th>
-                <th>Anmimal</th>
-                <th scope='col'>Appointment Date</th>
-                <th scope='col'>Appointment Time</th>
-                <th scope='col'>Appointment Type</th>
-                <th scope='col'>Appointment Description</th>
-                <th scope='col'>Status</th>
-            </tr>
-            {pastAppointments.map((appointment) => (
-                <tr key={appointment.id}>
+          <tr>
+            <th>Veterinarian</th>
+            <th scope='col'>Customer</th>
+            <th>Anmimal</th>
+            <th scope='col'>Appointment Date</th>
+            <th scope='col'>Appointment Time</th>
+            <th scope='col'>Appointment Type</th>
+            <th scope='col'>Appointment Description</th>
+            <th scope='col'>Status</th>
+          </tr>
+
+
+          {loading ? (
+            <Spinner />
+          ) : filteredAppoinments.length > 0 ? (
+            filteredAppoinments.map((appointment) => (
+              <tr key={appointment.id}>
                 <td>{appointment.veterinarian.firstname} {appointment.veterinarian.surname}</td>
                 <td>{appointment.customer.firstname} {appointment.customer.surname}</td>
                 <td>{appointment?.animal?.name}</td>
@@ -49,8 +77,31 @@ function PastVaccineAppointments() {
                   </span>
 
                 </td>
-                </tr>
-            ))}
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="3">No users found</td>
+            </tr>
+          )}
+
+          {/* {pastAppointments.map((appointment) => (
+            <tr key={appointment.id}>
+              <td>{appointment.veterinarian.firstname} {appointment.veterinarian.surname}</td>
+              <td>{appointment.customer.firstname} {appointment.customer.surname}</td>
+              <td>{appointment?.animal?.name}</td>
+              <td>{appointment.appointmentDate}</td>
+              <td>{appointment.appointmentTime}</td>
+              <td>{appointment.appointmentType}</td>
+              <td>{appointment.appointmentDescription}</td>
+              <td>
+                <span className="badge rounded-pill text-bg-primary">
+                  {appointment.status}
+                </span>
+
+              </td>
+            </tr>
+          ))} */}
         </thead>
       </table>
     </div>

@@ -19,7 +19,7 @@ function VetGenelMR() {
     <div>
       <h1>Veterinary Appointments</h1>
       <div style={containerStyle}>
-        <SelectionBar style={selectionBarStyle} />
+        {/* <SelectionBar style={selectionBarStyle} /> */}
         <AppointmentSchedule style={appointmentScheduleStyle} />
       </div>
     </div>

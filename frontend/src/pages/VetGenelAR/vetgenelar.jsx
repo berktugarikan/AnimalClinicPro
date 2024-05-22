@@ -19,7 +19,7 @@ function VetGenelAR() {
     <div>
       <h1>Veterinary Vaccine Appointments</h1>
       <div style={containerStyle}>
-        <SelectionBar style={selectionBarStyle} />
+        {/* <SelectionBar style={selectionBarStyle} /> */}
         <VaccineScheduleList style={vaccineScheduleListStyle} />
       </div>
     </div>

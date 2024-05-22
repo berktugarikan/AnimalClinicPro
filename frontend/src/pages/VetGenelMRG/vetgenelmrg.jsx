@@ -20,7 +20,7 @@ function VetGenelAR() {
     <div>
       <h1>Veterinary Appointments History</h1>
       <div style={containerStyle}>
-        <SelectionBar style={selectionBarStyle} />
+        {/* <SelectionBar style={selectionBarStyle} /> */}
         <PastAppointments style ={pastAppointmentsStyle} />
       </div>
     </div>
