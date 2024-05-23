@@ -27,30 +27,27 @@ export function Login() {
     }));
   }, [password]);
 
-  const onLoginSuccess = () => {
-    navigate("/vetmainpage");
-  };
-
-  const onLoginFailure = () => {
-    setGeneralError('Invalid email or password. Please try again.');
-  };
-
   const onSubmit = async (event) => {
-
     event.preventDefault();
-
     setGeneralError(null);
     setApiProgress(true);
 
     try {
-       await login(email, password);
-      onLoginSuccess();
+      await login(email, password);
+      const role = localStorage.getItem("role");
+
+      if (role === "ROLE_VETERINARIAN") {
+        navigate("/vetmainpage");
+      } else if (role === "ROLE_CUSTOMER") {
+        setGeneralError('Access denied. Customers are not allowed to login here.');
+      } else {
+        setGeneralError('Unexpected role. Please contact support.');
+      }
     } catch (error) {
       if (error.response?.data && error.response.data.status === 400) {
         setErrors(error.response.data.validationErrors);
       } else {
-        setGeneralError('Unexpected error occurred. Please try again');
-        onLoginFailure();
+        setGeneralError('Unexpected error occurred. Please try again.');
       }
     } finally {
       setApiProgress(false);
@@ -85,7 +82,7 @@ export function Login() {
               <button
                 type='submit'
                 className="btn btn-primary"
-                //disabled={apiProgress || !email || !password}
+                disabled={apiProgress || !email || !password}
               >
                 {apiProgress && <Spinner sm={true} />}
                 Login

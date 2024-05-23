@@ -184,7 +184,7 @@ export function AddAppointment() {
                             <label htmlFor="Customer" className="form-label">Customer</label>
                             <select value={formData.customerId} name='customerId' onChange={handleChangeCustomer}>
                                 {customer.map((item, index) => (
-                                    <option key={index} value={item.id}>{item.firstname} {item.surname}</option>
+                                    <option key={index} value={item.id}>{item.firstname} {item.surname} ({item.username})</option>
                                 ))}
                             </select>
                         </div>

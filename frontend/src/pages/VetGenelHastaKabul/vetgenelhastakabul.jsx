@@ -257,7 +257,7 @@ export default function VetGenelHastaKabul() {
                                 <option value={0}>Select Type</option>
                                 {users.map((user) => (
                                     <option style={{ color: 'black' }} key={user.id}
-                                        value={user.id}>{user.firstname} {user.surname}</option>
+                                        value={user.id}>{user.firstname} {user.surname} ({user.username})</option>
                                 ))}
                             </select>
                         </label>

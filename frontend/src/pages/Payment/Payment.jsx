@@ -1,47 +1,28 @@
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { Grid, Typography } from "@mui/material";
 import Box from '@mui/material/Box';
 import Radio from '@mui/material/Radio';
-import React, { useEffect, useState } from 'react';
 import './index.css';
 
-const appointmentTypes = ['EMERGENCY', 'CHECKUP', 'SURGERY', 'CONSULTATION', 'VACCINATION'];
-const statues = [
-    'PENDING',
-    'COMPLETED',
-    'CANCELLED'
-]
-
+const statuses = ['PENDING', 'COMPLETED', 'CANCELLED'];
 
 function Payment() {
-    const [selectedValue, setSelectedValue] = React.useState('');
-    const [checked, setChecked] = React.useState();
-    const [isResearch, setResearch] = React.useState(false);
+    const [selectedValue, setSelectedValue] = useState('');
     const [animal, setAnimal] = useState([]);
     const [customer, setCustomer] = useState([]);
-    const [veterinarian, setVetenerian] = useState([]);
+    const [veterinarian, setVeterinarian] = useState([]);
     const today = new Date().toISOString().split('T')[0];
     const [amount, setAmount] = useState(0);
 
     const [formData, setFormData] = useState({
         date: '',
-        dateTime: '',
-        appointmentType: appointmentTypes[0],
-        handleChangeAmount: 0,
+        appointmentType: 'vaccination',
+        amount: 0,
         animalId: 0,
         customerId: 0,
         veterinarianId: localStorage.getItem("userId"),
     });
-
-
-   
-    useEffect(() => {
-        const handleChangeAmount = (e) => {
-            formData.amount = amount
-        }
-        handleChangeAmount()
-
-    }, [amount]);
-
 
     useEffect(() => {
         const fetchData = async () => {
@@ -49,16 +30,16 @@ function Payment() {
                 const customerResponse = await axios.get("http://localhost:8080/api/users/customers");
                 setCustomer(customerResponse.data);
                 if (customerResponse.data.length > 0) {
-                    setFormData((prevData) => ({
+                    setFormData(prevData => ({
                         ...prevData,
                         customerId: customerResponse.data[0].id
                     }));
                 }
 
                 const veterinarianResponse = await axios.get("http://localhost:8080/api/users/vets");
-                setVetenerian(veterinarianResponse.data);
+                setVeterinarian(veterinarianResponse.data);
                 if (veterinarianResponse.data.length > 0) {
-                    setFormData((prevData) => ({
+                    setFormData(prevData => ({
                         ...prevData,
                         veterinarianId: localStorage.getItem("userId")
                     }));
@@ -71,9 +52,27 @@ function Payment() {
         fetchData();
     }, []);
 
+    useEffect(() => {
+        if (customer.length > 0) {
+            axios.get(`http://localhost:8080/api/animals/owner/${customer[0]?.id}`)
+                .then(response => {
+                    setAnimal(response.data);
+                    if (response.data.length > 0) {
+                        setFormData(prevData => ({
+                            ...prevData,
+                            animalId: response.data[0].id
+                        }));
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        }
+    }, [customer]);
+
     const handleChangeCustomer = (e) => {
         const customerId = +e.target.value;
-        setFormData((prevData) => ({
+        setFormData(prevData => ({
             ...prevData,
             customerId: customerId
         }));
@@ -81,7 +80,7 @@ function Payment() {
             .then(response => {
                 setAnimal(response.data);
                 if (response.data.length > 0) {
-                    setFormData((prevData) => ({
+                    setFormData(prevData => ({
                         ...prevData,
                         animalId: response.data[0].id
                     }));
@@ -89,53 +88,59 @@ function Payment() {
             })
             .catch(error => {
                 console.log(error);
-            })
+            });
     };
 
     const handleChangeAnimal = (e) => {
-        formData.animalId = + e.target.value
+        const animalId = +e.target.value;
+        setFormData(prevData => ({
+            ...prevData,
+            animalId: animalId
+        }));
     };
 
-    const handleChangeVeterenerian = (e) => {
-        formData.veterinarianId = + e.target.value
-    } 
+    const handleChangeVeterinarian = (e) => {
+        const veterinarianId = +e.target.value;
+        setFormData(prevData => ({
+            ...prevData,
+            veterinarianId: veterinarianId
+        }));
+    };
 
     const handleChange = (event) => {
-        setSelectedValue(event.target.value);
+        const { name, value } = event.target;
+        setFormData(prevData => ({
+            ...prevData,
+            [name]: value
+        }));
     };
 
-    const handleClick = (event) => {
-        setSelectedValue(event);
+    const handleClick = (value) => {
+        setSelectedValue(value);
     };
- 
-
 
     return (
         <div className="container">
-
             <Grid container>
-
                 <Grid item md={6}>
                     <Box className="px-3">
                         <h5>Pay Information</h5>
                         <button
-                            onClick={(e) => handleClick('Short News Story')}
-                            id={`${selectedValue === 'Short News Story' && 'active-re'}`}
-                            className="d-flex-c w-100 writing_box mt-4"
+                            onClick={() => handleClick('Pay Cash')}
+                            className={`d-flex-c w-100 writing_box mt-4 ${selectedValue === 'Pay Cash' ? 'active-re' : ''}`}
                         >
-
                             <Box className="w-100">
                                 <Box className="d-flex-c both-side text-left">
                                     <div className="writing_text_hed">Pay Cash</div>
                                     <div className="d-flex-c both-side">
                                         <Typography>${amount ? amount : "0"}.00</Typography>
                                         <Radio
-                                            checked={selectedValue === 'Short News Story'}
+                                            checked={selectedValue === 'Pay Cash'}
                                             onChange={handleChange}
-                                            value="Short News Story"
+                                            value="Pay Cash"
                                             className="radio-writings"
                                             name="radio-buttons"
-                                            inputProps={{ 'aria-label': 'Short News Story' }}
+                                            inputProps={{ 'aria-label': 'Pay Cash' }}
                                         />
                                     </div>
                                 </Box>
@@ -146,24 +151,21 @@ function Payment() {
                         </button>
 
                         <button
-                            onClick={(e) => handleClick('Regular News Story')}
-                            className="d-flex-c w-100 writing_box mt-2 "
-                            id={`${selectedValue === 'Regular News Story' && 'active-re'}`}
+                            onClick={() => handleClick('Pay Debit')}
+                            className={`d-flex-c w-100 writing_box mt-2 ${selectedValue === 'Pay Debit' ? 'active-re' : ''}`}
                         >
-
-
                             <Box className="w-100">
                                 <Box className="d-flex-c both-side text-left">
                                     <div className="writing_text_hed">Pay Debit</div>
                                     <div className="d-flex-c both-side">
                                         <Typography>${amount ? amount : "0"}.00</Typography>
                                         <Radio
-                                            checked={selectedValue === 'Regular News Story'}
+                                            checked={selectedValue === 'Pay Debit'}
                                             onChange={handleChange}
-                                            value="Regular News Story"
+                                            value="Pay Debit"
                                             className="radio-writings"
                                             name="radio-buttons"
-                                            inputProps={{ 'aria-label': 'Regular News Story' }}
+                                            inputProps={{ 'aria-label': 'Pay Debit' }}
                                         />
                                     </div>
                                 </Box>
@@ -172,34 +174,26 @@ function Payment() {
                                 </Typography>
                             </Box>
                         </button>
-
-
-
-
-
                     </Box>
                 </Grid>
                 <Grid item md={6} className="px-2">
-
                     <h5>Client Information</h5>
-
                     <label htmlFor="Customer" className="form-label">Customer</label>
-                    <select className="input_" value={formData.customerId} name='customerId' id="Appointment_Date" onChange={handleChangeCustomer}>
+                    <select className="input_" value={formData.customerId} name='customerId' onChange={handleChangeCustomer}>
                         {customer.map((item, index) => (
                             <option key={index} value={item.id}>{item.firstname} {item.surname}</option>
                         ))}
                     </select>
 
-
-                    <label htmlFor="Veterenerian" className="form-label">Veterenerian</label>
-                    <select className="input_" value={formData.veterinarianId} name='veterinarianId' onChange={handleChangeVeterenerian} defaultValue={localStorage.getItem("userId")}>
+                    <label htmlFor="Veterinarian" className="form-label">Veterinarian</label>
+                    <select className="input_" value={formData.veterinarianId} name='veterinarianId' onChange={handleChangeVeterinarian} defaultValue={localStorage.getItem("userId")}>
                         {veterinarian.map((item, index) => (
                             <option key={index} value={item.id}>{item.firstname} {item.surname}</option>
                         ))}
                     </select>
 
-                    <label htmlFor="" className="form-label">Pet name</label>
-                    <select className="input_" value={formData.animalId} name='animalId' id="Appointment_Date" onChange={handleChangeAnimal}>
+                    <label htmlFor="Animal" className="form-label">Pet name</label>
+                    <select className="input_" value={formData.animalId} name='animalId' onChange={handleChangeAnimal}>
                         {animal.map((item, index) => (
                             <option key={index} value={item.id}>{item.name} - ({item.type})</option>
                         ))}
@@ -209,32 +203,21 @@ function Payment() {
                     <input type="date" className="form-control" id="Appointment_Date" name="date"
                         value={formData.date} onChange={handleChange} min={today} required />
 
-                    <label htmlFor="Appointment_Date" className="form-label">Payment amount</label>
-                    <input type="number" name="amount"
+                    <label htmlFor="Amount" className="form-label">Payment amount</label>
+                    <input type="number" className="form-control" id="Amount" name="amount"
                         value={amount} onChange={e => setAmount(e.target.value)} required />
 
-                    <label htmlFor="" className="form-label">Processtype</label>
-                    <select className="input_" value={formData.animalId} name='animalId' id="Appointment_Date" onChange={handleChangeAnimal}>
-                        <option value="vaccination"> Vaccination </option>
-                        <option value="examination">  Examination</option>
+                    <label htmlFor="ProcessType" className="form-label">Process Type</label>
+                    <select className="input_" value={formData.appointmentType} name='appointmentType' onChange={handleChange}>
+                        <option value="vaccination">Vaccination</option>
+                        <option value="examination">Examination</option>
                     </select>
-
-
                 </Grid>
             </Grid>
 
-            <div className="w-100"
-                style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center'
-                }}
-            >
-                <button className="button-next mt-4" role="button">
-                    Pay Now
-                </button>
-            </div> 
-
+            <div className="w-100" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <button className="button-next mt-4" role="button">Pay Now</button>
+            </div>
         </div>
     );
 }

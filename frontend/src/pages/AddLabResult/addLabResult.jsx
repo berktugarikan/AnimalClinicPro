@@ -134,7 +134,7 @@ function AddLabResult() {
                             <label htmlFor="Veterenerian" className="form-label">Veterenerian</label>
                             <select value={result.veterinarianId} name='veterinarianId' onChange={handleChangeVeterenerian} defaultValue={localStorage.getItem("userId")}>
                                 {veterinarians.map((item, index) => (
-                                    <option key={index} value={item.id}>{item.firstname} {item.surname}</option>
+                                    <option key={index} value={item.id}>{item.firstname} {item.surname} </option>
                                 ))}
                             </select>
                         </div>
@@ -142,7 +142,7 @@ function AddLabResult() {
                             <label htmlFor="Customer" className="form-label">Customer</label>
                             <select name='customerId' onChange={handleChangeCustomer} >
                                 {customers.map((item, index) => (
-                                    <option key={index} value={item.id}>{item.firstname} {item.surname}</option>
+                                    <option key={index} value={item.id}>{item.firstname} {item.surname} ({item.username})</option>
                                 ))}
                             </select>
                         </div>

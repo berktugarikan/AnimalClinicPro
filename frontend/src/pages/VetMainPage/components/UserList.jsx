@@ -23,7 +23,7 @@ export function UserList() {
   const getUsers = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`http://localhost:8080/api/users`);
+      const response = await axios.get(`http://localhost:8080/api/users/customers`);
       if (response.data.length > 0) {
         const reversedData = response.data.reverse();
         setUsers(reversedData);
