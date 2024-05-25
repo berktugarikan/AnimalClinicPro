@@ -23,7 +23,12 @@ export function UserList() {
   const getUsers = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`http://localhost:8080/api/users/customers`);
+      const clinicId = localStorage.getItem("clinicId"); // Local storage'dan clinic ID'yi al
+      const response = await axios.get(`http://localhost:8080/api/users/customers`, {
+        params: {
+          clinicId: clinicId || undefined, // Clinic ID'yi query parametresi olarak ekle (eğer varsa)
+        }
+      });
       if (response.data.length > 0) {
         const reversedData = response.data.reverse();
         setUsers(reversedData);

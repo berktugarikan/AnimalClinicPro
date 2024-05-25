@@ -10,16 +10,21 @@ function PastVaccineAppointments() {
 
   useEffect(() => {
     const fetchData = async () => {
-      axios.get("http://localhost:8080/api/vaccinations")
-        .then(response => {
-          if (response?.data?.length > 0) {
-            const reversedVaccineAppointments = response.data.reverse();
-            setPastVaccineAppointments(reversedVaccineAppointments)
-          }
-        })
+        const userId = localStorage.getItem('userId');
+        if (userId) {
+            try {
+                const response = await axios.get(`http://localhost:8080/api/vaccinations/clinic/${userId}`);
+                if (response?.data?.length > 0) {
+                    const reversedVaccineAppointments = response.data.reverse();
+                    setPastVaccineAppointments(reversedVaccineAppointments);
+                }
+            } catch (error) {
+                console.error('Error fetching the vaccination data', error);
+            }
+        }
     };
     fetchData();
-  }, []);
+}, []);
 
   const filteredAppoinments = pastVaccineAppointments.filter(
     (appointment) =>

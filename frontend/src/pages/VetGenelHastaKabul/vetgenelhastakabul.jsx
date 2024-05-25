@@ -42,7 +42,12 @@ export default function VetGenelHastaKabul() {
 
     const getUsers = useCallback(async () => {
         try {
-            const response = await axios.get(`http://localhost:8080/api/users/customers`);
+            const clinicId = localStorage.getItem("clinicId"); // Local storage'dan clinic ID'yi al
+            const response = await axios.get("http://localhost:8080/api/users/customers", {
+                params: {
+                    clinicId: clinicId // Clinic ID'yi query parametresi olarak ekle
+                }
+            });
             setUsers(response.data);
             if (response.data.length > 0) {
                 setAnimal(prev => ({
@@ -58,33 +63,13 @@ export default function VetGenelHastaKabul() {
     }, []);
 
 
-    const getAnimalTypes = useCallback(async () => {
-        try {
-            const response = await axios.get(`http://localhost:8080/api/animal-types`);
-            setAnimalTypes(response.data);
-        } catch (error) {
-            console.error("Error fetching users:", error);
-        } finally {
 
-        }
-    }, []);
-
-    const getBreed = useCallback(async () => {
-        try {
-            const response = await axios.get(`http://localhost:8080/api/breeds`);
-            setBreeds(response.data);
-        } catch (error) {
-            console.error("Error fetching users:", error);
-        } finally {
-
-        }
-    }, []);
+    
 
     useEffect(() => {
         getUsers();
-        getAnimalTypes()
-        getBreed()
-    }, [getUsers, getAnimalTypes, getBreed]);
+               
+    }, [getUsers]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();

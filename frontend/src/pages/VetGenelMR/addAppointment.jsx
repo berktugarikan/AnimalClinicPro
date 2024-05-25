@@ -4,19 +4,15 @@ import { useNavigate } from "react-router-dom";
 import toast from 'react-hot-toast';
 
 const appointmentTypes = ['EMERGENCY', 'CHECKUP', 'SURGERY', 'CONSULTATION', 'VACCINATION'];
-const statues = [
-    'PENDING',
-    'COMPLETED',
-    'CANCELLED'
-]
+const statues = ['PENDING', 'COMPLETED', 'CANCELLED'];
 
 export function AddAppointment() {
     const [animal, setAnimal] = useState([]);
     const [customer, setCustomer] = useState([]);
-    const [veterinarian, setVetenerian] = useState([]);
+    const [veterinarian, setVeterinarian] = useState([]);
     const today = new Date().toISOString().split('T')[0];
 
-    const [appointments, setAppoinments] = useState([]);
+    const [appointments, setAppointments] = useState([]);
 
     const [formData, setFormData] = useState({
         date: '',
@@ -34,7 +30,12 @@ export function AddAppointment() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const customerResponse = await axios.get("http://localhost:8080/api/users/customers");
+                const clinicId = localStorage.getItem("clinicId"); // Local storage'dan clinic ID'yi al
+                const customerResponse = await axios.get("http://localhost:8080/api/users/customers", {
+                    params: {
+                        clinicId: clinicId // Clinic ID'yi query parametresi olarak ekle
+                    }
+                });
                 setCustomer(customerResponse.data);
                 if (customerResponse.data.length > 0) {
                     setFormData((prevData) => ({
@@ -43,12 +44,12 @@ export function AddAppointment() {
                     }));
                 }
 
-                const veterinarianResponse = await axios.get("http://localhost:8080/api/users/vets");
-                setVetenerian(veterinarianResponse.data);
-                if (veterinarianResponse.data.length > 0) {
+                const vetResponse = await axios.get(`http://localhost:8080/api/users/${localStorage.getItem("userId")}`);
+                setVeterinarian([vetResponse.data]);
+                if (vetResponse.data) {
                     setFormData((prevData) => ({
                         ...prevData,
-                        veterinarianId: localStorage.getItem("userId")
+                        veterinarianId: vetResponse.data.id
                     }));
                 }
             } catch (error) {
@@ -56,16 +57,8 @@ export function AddAppointment() {
             }
         };
 
-        const fetchAppointments = async () => {
-            const response = await axios.get("http://localhost:8080/api/appointments");
-            setAppoinments(response.data);
-        }
-
         fetchData();
-        fetchAppointments();
     }, []);
-
-    console.log(appointments)
 
     useEffect(() => {
         axios.get(`http://localhost:8080/api/animals/owner/${customer[0]?.id}`)
@@ -81,12 +74,13 @@ export function AddAppointment() {
             .catch(error => {
                 console.log(error);
             })
-    }, [customer])
+    }, [customer]);
 
     function timeInMinutes(timeString) {
         const [hours, minutes] = timeString.split(':').map(Number);
         return hours * 60 + minutes;
     }
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         
@@ -104,7 +98,6 @@ export function AddAppointment() {
                 }
             })
 
-
             if (!available) { return toast.error("Time not Available!") };
 
             setFormData((prevData) => ({
@@ -112,7 +105,6 @@ export function AddAppointment() {
                 [name]: value + ':00',
             }));
         } else {
-
             if (name === 'date') {
                 setFormData((prevData) => ({
                     ...prevData,
@@ -126,7 +118,6 @@ export function AddAppointment() {
                 }));
             }
         }
-
     };
 
     const handleChangeCustomer = (e) => {
@@ -154,10 +145,6 @@ export function AddAppointment() {
         formData.animalId = + e.target.value
     };
 
-    const handleChangeVeterenerian = (e) => {
-        formData.veterinarianId = + e.target.value
-    }
-
     const handleSubmit = async (e) => {
 
         e.preventDefault();
@@ -175,7 +162,6 @@ export function AddAppointment() {
 
     return (
         <div style={{ display: 'flex', width: '100%' }}>
-
             <div className="card flex-grow-1">
                 <div className="card-header text-center fs-4">Add Appointment</div>
                 <div className="card-body">
@@ -197,8 +183,8 @@ export function AddAppointment() {
                             </select>
                         </div>
                         <div className="mb-3">
-                            <label htmlFor="Veterenerian" className="form-label">Veterenerian</label>
-                            <select value={formData.veterinarianId} name='veterinarianId' onChange={handleChangeVeterenerian} defaultValue={localStorage.getItem("userId")}>
+                            <label htmlFor="Veterinarian" className="form-label">Veterinarian</label>
+                            <select value={formData.veterinarianId} name='veterinarianId' onChange={handleChange}>
                                 {veterinarian.map((item, index) => (
                                     <option key={index} value={item.id}>{item.firstname} {item.surname}</option>
                                 ))}
@@ -224,11 +210,9 @@ export function AddAppointment() {
                             </select>
                         </div>
                         <div className="mb-3">
-                            <label htmlFor="Appointment_Description" className="form-label">Appointment
-                                Description</label>
+                            <label htmlFor="Appointment_Description" className="form-label">Appointment Description</label>
                             <input type="text" className="form-control" id="Appointment_Description"
-                                name="description" value={formData.description}
-                                onChange={handleChange} required />
+                                name="description" value={formData.description} onChange={handleChange} required />
                         </div>
                         <div className="mb-3">
                             <label htmlFor="status" className="form-label">Status</label>

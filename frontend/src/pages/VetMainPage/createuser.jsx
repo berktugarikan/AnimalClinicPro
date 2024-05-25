@@ -11,7 +11,8 @@ function CreateUser() {
     password: '',
     email: '',
     phoneNumber: '',
-    role: 'ROLE_CUSTOMER'
+    role: 'ROLE_CUSTOMER',
+    clinicId: localStorage.getItem('clinicId') // Local storage'dan klinik kimliği al
   });
   const navigate = useNavigate();
   const handleInputChange = (e) => {
@@ -20,15 +21,14 @@ function CreateUser() {
   };
 
   const handleCreateUser = async () => {
-
     await axios.post('http://localhost:8080/api/users', newUser)
-          .then(response => {
-      if(response.status === 200){
-        navigate('/vetmainpage')
-      }
-    }).catch(error => {
-      console.log(error);
-        })
+      .then(response => {
+        if (response.status === 200) {
+          navigate('/vetmainpage');
+        }
+      }).catch(error => {
+        console.log(error);
+      });
   };
 
   return (

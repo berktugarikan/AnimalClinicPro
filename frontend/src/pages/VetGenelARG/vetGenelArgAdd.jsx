@@ -84,24 +84,30 @@ function VetGenelArgAdd() {
     };
 
     useEffect(() => {
+        const clinicId = localStorage.getItem("clinicId"); // Local storage'dan clinic ID'yi al
+
         const fetchVeterinarian = async () => {
-            axios.get('http://localhost:8080/api/users/vets')
-                .then(response => {
-                    setVeterinarians(response.data)
-                    if (response.data.length > 0) {
-                        setFormData((prevData) => ({
-                            ...prevData,
-                            veterinarianId: localStorage.getItem("userId")
-                        }));
-                    }
-                })
-                .catch(error => {
-                    console.log(error)
-                })
+            try {
+                const response = await axios.get(`http://localhost:8080/api/users/${localStorage.getItem("userId")}`);
+                setVeterinarians([response.data]);
+                if (response.data) {
+                    setFormData((prevData) => ({
+                        ...prevData,
+                        veterinarianId: vetResponse.data.id
+                    }));
+                }
+            } catch (error) {
+                console.log(error);
+            }
         };
 
         const fetchCustomer = async () => {
-            axios.get('http://localhost:8080/api/users/customers')
+            const clinicId = localStorage.getItem("clinicId"); // Local storage'dan clinic ID'yi al
+            const response = await axios.get("http://localhost:8080/api/users/customers", {
+                params: {
+                    clinicId: clinicId // Clinic ID'yi query parametresi olarak ekle
+                }
+            })
                 .then(response => {
                     setCustomers(response.data);
                     if (response.data.length > 0) {

@@ -13,5 +13,7 @@ export const login = async (username, password) => {
       localStorage.setItem("username", response.data.username);
       localStorage.setItem("role", response.data.role);
       localStorage.setItem("userId", response.data.userId);
+      localStorage.setItem("clinicId", response.data.clinicId);
+
     });
 };

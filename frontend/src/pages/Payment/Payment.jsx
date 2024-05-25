@@ -27,7 +27,12 @@ function Payment() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const customerResponse = await axios.get("http://localhost:8080/api/users/customers");
+                const clinicId = localStorage.getItem("clinicId"); // Local storage'dan clinic ID'yi al
+                const customerResponse = await axios.get("http://localhost:8080/api/users/customers", {
+                    params: {
+                        clinicId: clinicId // Clinic ID'yi query parametresi olarak ekle
+                    }
+                })
                 setCustomer(customerResponse.data);
                 if (customerResponse.data.length > 0) {
                     setFormData(prevData => ({
@@ -36,12 +41,12 @@ function Payment() {
                     }));
                 }
 
-                const veterinarianResponse = await axios.get("http://localhost:8080/api/users/vets");
-                setVeterinarian(veterinarianResponse.data);
-                if (veterinarianResponse.data.length > 0) {
-                    setFormData(prevData => ({
+                const vetResponse = await axios.get(`http://localhost:8080/api/users/${localStorage.getItem("userId")}`);
+                setVeterinarian([vetResponse.data]);
+                if (vetResponse.data) {
+                    setFormData((prevData) => ({
                         ...prevData,
-                        veterinarianId: localStorage.getItem("userId")
+                        veterinarianId: vetResponse.data.id
                     }));
                 }
             } catch (error) {
