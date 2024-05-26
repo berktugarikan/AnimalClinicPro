@@ -39,7 +39,7 @@ export function Login() {
       if (role === "ROLE_VETERINARIAN") {
         navigate("/vetmainpage");
       } else if (role === "ROLE_CUSTOMER") {
-        setGeneralError('Access denied. Customers are not allowed to login here.');
+        navigate("/vetmainpage");
       } else {
         setGeneralError('Unexpected role. Please contact support.');
       }

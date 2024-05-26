@@ -75,7 +75,15 @@ function VetMainPage() {
   // };
 
   const handleAddUser = () => {
-    navigate('/createuser');
+    const role = localStorage.getItem('role'); // Local storage'dan role değerini al
+  
+    if (role === 'ROLE_VETERINARIAN') {
+      navigate('/createuser'); 
+    } else if (role === 'ROLE_CUSTOMER') {
+      alert('Access Denied'); 
+    } else {
+      console.log('Unknown role'); 
+    }
   };
 
 

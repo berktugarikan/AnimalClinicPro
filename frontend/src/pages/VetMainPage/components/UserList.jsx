@@ -16,9 +16,16 @@ export function UserList() {
   const [updateData, setUpdateData] = useState({
     firstname: "",
     surname: "",
-    email: ""
+    email: "",
+    phone: ""
     // Diğer gerekli alanları buraya ekleyebilirsiniz
   });
+
+  const role = localStorage.getItem('role'); // Rolü local storage'dan al
+  if (role === 'ROLE_CUSTOMER') {
+    alert('Access Denied');
+    return null; // Erişim engellendi, bileşeni render etme
+  }
 
   const getUsers = useCallback(async () => {
     setLoading(true);
@@ -94,9 +101,9 @@ export function UserList() {
     (user) =>
       user?.firstname?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user?.surname?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user?.email?.toLowerCase().includes(searchTerm.toLowerCase())
+      user?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user?.phone?.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
 
   const updateUser = async () => {
     const { id, ...updatedUser } = updateData;
@@ -120,8 +127,6 @@ export function UserList() {
     });
   };
 
-
-
   return (
     <div className="card" style={{ width: "100%" }} >
       <div className="card-header text-center fs-4" style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -141,7 +146,8 @@ export function UserList() {
           <tr>
             <th>Name-Surname</th>
             <th>Email</th>
-            <th>Action</th>
+            <th>Phone</th>
+            <th>Action</th>        
           </tr>
         </thead>
         <tbody>
@@ -152,6 +158,7 @@ export function UserList() {
               <tr key={user.id}>
                 <td>{user.firstname} {user.surname}</td>
                 <td>{user.email}</td>
+                <td>{user.phoneNumber}</td> {/* Telefon numarasını yazdır */}
                 <td style={{ display: 'flex', gap: '5px' }}>
                   <button className="btn btn-primary" onClick={() => editUser(user.id)}>Edit</button>
                   <button className="btn btn-danger" onClick={() => deleteUser(user.id)}>Delete</button>
@@ -160,7 +167,7 @@ export function UserList() {
             ))
           ) : (
             <tr>
-              <td colSpan="3">No users found</td>
+              <td colSpan="4">No users found</td>
             </tr>
           )}
         </tbody>
@@ -200,6 +207,10 @@ export function UserList() {
                       <label htmlFor="email">Email</label>
                       <input type="email" className="form-control" id="email" name="email" value={updateData.email} onChange={handleInputChange} />
                     </div>
+                    <div className="form-group">
+                      <label htmlFor="phone">Phone</label>
+                      <input type="text" className="form-control" id="phone" name="phone" value={updateData.phone} onChange={handleInputChange} /> {/* Telefon numarası giriş alanı */}
+                    </div>
                     {/* Diğer gerekli alanları buraya ekleyebilirsiniz */}
                     <button type="button" className="btn btn-primary" onClick={updateUser}>Update</button>
                   </>
@@ -207,7 +218,6 @@ export function UserList() {
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" onClick={closeModal}>Close</button>
-
               </div>
             </div>
           </div>

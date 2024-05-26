@@ -15,13 +15,20 @@ const pages = [
   { name: 'Laboratory Tests', path: '/vetgeneltahlil' },
   { name: 'Laboratory Result Add', path: '/addLabResult' },
   { name: 'Payment', path: '/payment' },
-  { name: 'Payment History', path: '/vetgenelödemegeçmişi' }];
+  { name: 'Payment History', path: '/vetgenelödemegeçmişi' }
+];
 
 export default function SelectionBar() {
   const [selectedPage, setSelectedPage] = React.useState();
   const navigate = useNavigate();
 
   const handlePageClick = (page) => {
+    const role = localStorage.getItem('role'); // Rolü local storage'dan al
+    if (role === 'ROLE_CUSTOMER' && (page.path === '/vetgenelhastakabul' || page.path === '/addAppointment' || page.path ==='/vetgenelargadd'|| page.path ==='/addLabResult'|| page.path ==='/payment')) {
+      alert('Access Denied');
+      return;
+    }
+
     setSelectedPage(page.path);
     navigate(page.path);
   };
@@ -32,7 +39,6 @@ export default function SelectionBar() {
         height: '100%',
         maxWidth: 300,
         bgcolor: 'white',
-        // marginTop: '5px',
         borderRadius: '5px',
         display: {
           xs: 'none',
@@ -44,17 +50,11 @@ export default function SelectionBar() {
       <nav aria-label="main mailbox folders" style={{ width: "100%" }}>
         <List style={{ display: 'flex', flexDirection: 'column', gap: '5px', width: '100%' }}>
           {pages.map((page) => (
-            <ListItem key={page} disablePadding style={{ width: "100%" }}>
+            <ListItem key={page.path} disablePadding style={{ width: "100%" }}>
               <ListItemButton
                 style={{ width: "100%" }}
                 selected={selectedPage === page.path}
                 onClick={() => handlePageClick(page)}
-                // sx={{
-                //   bgcolor: selectedPage === page.path ? '#6c9286' : '#c3dfd6',
-                //   '&:hover': {
-                //     backgroundColor: selectedPage === page.path ? '#6c9286' : '#c3dfd6',
-                //   },
-                // }}
                 sx={{ borderRadius: '5px' }}
               >
                 <ListItemText primary={page.name} />
