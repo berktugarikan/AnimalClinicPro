@@ -9,22 +9,47 @@ function PastVaccineAppointments() {
 
   
   useEffect(() => {
-    const clinicId = localStorage.getItem("userId");
+    const role = localStorage.getItem("role");
   
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`http://localhost:8080/api/appointments/veterinarian/${clinicId}`);
-        if (response.data.length > 0) {
-          const reversedAppointments = response.data.reverse();
-          setPastAppointments(reversedAppointments);
+    if (role === "ROLE_VETERINARIAN") {
+      // Veteriner rolü ise ilgili API'yi çağır
+      const clinicId = localStorage.getItem("userId");
+  
+      const fetchData = async () => {
+        try {
+          const response = await axios.get(`http://localhost:8080/api/appointments/veterinarian/${clinicId}`);
+          if (response.data.length > 0) {
+            const reversedAppointments = response.data.reverse();
+            setPastAppointments(reversedAppointments);
+          }
+        } catch (error) {
+          console.log(error);
         }
-      } catch (error) {
-        console.log(error);
-      }
-    };
+      };
   
-    fetchData();
+      fetchData();
+    } else if (role === "ROLE_CUSTOMER") {
+      // Müşteri rolü ise müşteriye özel API'yi çağır
+      const customerId = localStorage.getItem("userId");
+  
+      const fetchData = async () => {
+        try {
+          const response = await axios.get(`http://localhost:8080/api/appointments/customer/${customerId}`);
+          if (response.data.length > 0) {
+            const reversedAppointments = response.data.reverse();
+            setPastAppointments(reversedAppointments);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      };
+  
+      fetchData();
+    } else {
+      console.log("Undefined role.");
+    }
   }, []);
+  
 
   const [searchTerm, setSearchTerm] = useState("");
 

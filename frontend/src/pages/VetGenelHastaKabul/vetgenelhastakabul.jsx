@@ -23,6 +23,7 @@ export default function VetGenelHastaKabul() {
         bloodType: '',
         length: 0,
         userId: 2,
+        clinicId: localStorage.getItem('clinicId') || ''
     });
 
     const [openModal, setOpenModal] = useState(false);
@@ -88,7 +89,8 @@ export default function VetGenelHastaKabul() {
             ageCategory: animal.ageCategory,
             bloodType: animal.bloodType,
             length: parseFloat(animal.length),
-            userId: animal.userId
+            userId: animal.userId,
+            clinicId:  localStorage.getItem("clinicId")
         };
 
         console.log(formattedAnimal)

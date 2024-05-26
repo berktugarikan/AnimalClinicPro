@@ -322,8 +322,8 @@ import { Avatar } from "@mui/material";
 const pages = [
     { name: 'General', link: 'vetgenelhastakabul' },
     { name: 'Patient', link: 'vethasta' },
-    { name: 'Financial', link: 'vetfinancial' },
-    { name: 'Laboratory', link: 'vetlaboratory' },
+    { name: 'Financial', link: 'vetgenelödemegeçmişi' },
+    { name: 'Laboratory', link: 'vetgeneltahlil' },
 ];
 
 
@@ -338,10 +338,26 @@ import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { useNavigate } from "react-router-dom";
 import MobileSelectionBar from "./MobileSelectionBar";
-
 function VetMainBar() {
-
     const navigate = useNavigate();
+    const userRole = localStorage.getItem("role");
+
+    const handleGeneralPageClick = () => {
+        if (userRole === "ROLE_CUSTOMER") {
+            alert("Access Denied");
+            return;
+        }
+        navigate("/vetgenelhastakabul");
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("username");
+        localStorage.removeItem("role");
+        localStorage.removeItem("userId");
+        navigate('/login');
+    };
+
     return (
         <Navbar collapseOnSelect expand="lg" className="bg-body-tertiary">
             <Container>
@@ -354,30 +370,22 @@ function VetMainBar() {
                     />
                 </Navbar.Brand>
                 <MobileSelectionBar />
-                {/* <Navbar.Toggle aria-controls="responsive-navbar-nav" /> */}
                 <Navbar.Collapse id="responsive-navbar-nav">
                     <Nav className="me-auto">
                         {pages.map((page) => (
-                            <Nav.Link href={page.link}>{page.name}</Nav.Link>
+                            <Nav.Link key={page.name} onClick={page.name === 'General' ? handleGeneralPageClick : () => navigate(page.link)}>
+                                {page.name}
+                            </Nav.Link>
                         ))}
-
                     </Nav>
-
                     <Nav>
                         <NavDropdown title={localStorage.getItem("username")} id="collapsible-nav-dropdown">
                             {settings.map((setting) => (
-                                <NavDropdown.Item href={setting.link}>
+                                <NavDropdown.Item key={setting.name} href={setting.link}>
                                     {setting.name}
                                 </NavDropdown.Item>
-
                             ))}
-                            <NavDropdown.Item onClick={() => {
-                                localStorage.removeItem("token");
-                                localStorage.removeItem("username");
-                                localStorage.removeItem("role");
-                                localStorage.removeItem("userId");
-                                navigate('/login');
-                            }} >
+                            <NavDropdown.Item onClick={handleLogout}>
                                 Logout
                             </NavDropdown.Item>
                         </NavDropdown>

@@ -9,22 +9,39 @@ function PastVaccineAppointments() {
 
 
   useEffect(() => {
+    const role = localStorage.getItem("role");
+  
     const fetchData = async () => {
-        const userId = localStorage.getItem('userId');
-        if (userId) {
-            try {
-                const response = await axios.get(`http://localhost:8080/api/vaccinations/clinic/${userId}`);
-                if (response?.data?.length > 0) {
-                    const reversedVaccineAppointments = response.data.reverse();
-                    setPastVaccineAppointments(reversedVaccineAppointments);
-                }
-            } catch (error) {
-                console.error('Error fetching the vaccination data', error);
+      try {
+        if (role === "ROLE_VETERINARIAN") {
+          const userId = localStorage.getItem("userId");
+          if (userId) {
+            const response = await axios.get(`http://localhost:8080/api/vaccinations/clinic/${userId}`);
+            if (response?.data?.length > 0) {
+              const reversedVaccineAppointments = response.data.reverse();
+              setPastVaccineAppointments(reversedVaccineAppointments);
             }
+          }
+        } else if (role === "ROLE_CUSTOMER") {
+          const customerId = localStorage.getItem("userId");
+          if (customerId) {
+            const response = await axios.get(`http://localhost:8080/api/vaccinations/customer/${customerId}`);
+            if (response?.data?.length > 0) {
+              const reversedVaccineAppointments = response.data.reverse();
+              setPastVaccineAppointments(reversedVaccineAppointments);
+            }
+          }
+        } else {
+          console.error("Undefined role.");
         }
+      } catch (error) {
+        console.error("Error fetching the vaccination data", error);
+      }
     };
+  
     fetchData();
-}, []);
+  }, []);
+  
 
   const filteredAppoinments = pastVaccineAppointments.filter(
     (appointment) =>

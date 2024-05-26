@@ -10,22 +10,39 @@ const VetGenelTahlil = () => {
     const [results, setResults] = useState([]);
 
     useEffect(() => {
+        const role = localStorage.getItem("role");
+      
         const fetchData = async () => {
-            const userId = localStorage.getItem('userId');
-            if (userId) {
-                try {
-                    const response = await axios.get(`http://localhost:8080/api/lab-tests/veterinarian/${userId}`);
-                    if (response?.data?.length > 0) {
-                        const reversedResults = response.data.reverse();
-                        setResults(reversedResults);
-                    }
-                } catch (error) {
-                    console.error('Error fetching lab test data', error);
+          try {
+            if (role === "ROLE_VETERINARIAN") {
+              const userId = localStorage.getItem("userId");
+              if (userId) {
+                const response = await axios.get(`http://localhost:8080/api/lab-tests/veterinarian/${userId}`);
+                if (response?.data?.length > 0) {
+                  const reversedResults = response.data.reverse();
+                  setResults(reversedResults);
                 }
+              }
+            } else if (role === "ROLE_CUSTOMER") {
+              const customerId = localStorage.getItem("userId");
+              if (customerId) {
+                const response = await axios.get(`http://localhost:8080/api/lab-tests/customer/${customerId}`);
+                if (response?.data?.length > 0) {
+                  const reversedResults = response.data.reverse();
+                  setResults(reversedResults);
+                }
+              }
+            } else {
+              console.error("Undefined role.");
             }
+          } catch (error) {
+            console.error("Error fetching lab test data", error);
+          }
         };
+      
         fetchData();
-    }, []);
+      }, []);
+      
 
     const endpointParam = location.pathname;
 

@@ -8,16 +8,18 @@ const PaymentHistory = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            axios.get('http://localhost:3000/api/customer-purchase')
-                .then(response=> {
-                    setPayments(response.data)
-                })
-                .catch(error => {
-                    console.log(error);
-                })
-        }
-        fetchData()
-    }, []);
+            try {
+                // Kullanıcıya ait ödemeleri al
+                if (userId) {
+                    const userPaymentsResponse = await axios.get(`http://localhost:8080/api/customer-purchases/clinic/${userId}`);
+                    setPayments(userPaymentsResponse.data);
+                }
+            } catch (error) {
+                console.error("Error fetching user payments:", error);
+            }
+        };
+        fetchData();
+    }, [userId]);
 
     return (
         <div>

@@ -13,14 +13,42 @@ const PetCard = () => {
     const [customers, setCustomers] = useState([]);
 
     useEffect(() => {
-        const fetchData = async () => {
-            const response = await axios.get('http://localhost:8080/api/animals');
-            if(response?.data?.length > 0) {
-                const reversedPetData = response.data.reverse();
-                setPetData(reversedPetData);
-            }
-            console.log(response.data)
-        };
+        const role = localStorage.getItem("role");
+
+  const fetchData = async () => {
+    try {
+      if (role === "ROLE_VETERINARIAN") {
+        const clinicId = localStorage.getItem("clinicId");
+        if (clinicId) {
+          const response = await axios.get(`http://localhost:8080/api/animals/clinic/${clinicId}`);
+          if (response?.data?.length > 0) {
+            const reversedPetData = response.data.reverse();
+            setPetData(reversedPetData);
+          }
+          console.log(response.data);
+        } else {
+          console.error("Clinic ID not found in localStorage");
+        }
+      } else if (role === "ROLE_CUSTOMER") {
+        const userId = localStorage.getItem("userId");
+        if (userId) {
+          const response = await axios.get(`http://localhost:8080/api/animals/owner/${userId}`);
+          if (response?.data?.length > 0) {
+            const reversedPetData = response.data.reverse();
+            setPetData(reversedPetData);
+          }
+          console.log(response.data);
+        } else {
+          console.error("User ID not found in localStorage");
+        }
+      } else {
+        console.error("Undefined role.");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
 
         const fetchCustomerData = async () => {
             const response = await axios.get("http://localhost:8080/api/users/customers");
