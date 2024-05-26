@@ -40,7 +40,10 @@ export function Login() {
         navigate("/vetmainpage");
       } else if (role === "ROLE_CUSTOMER") {
         navigate("/vetmainpage");
-      } else {
+      } else if(role === "ROLE_ADMIN"){
+        navigate("/admin")
+      }
+      else {
         setGeneralError('Unexpected role. Please contact support.');
       }
     } catch (error) {

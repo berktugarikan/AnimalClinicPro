@@ -6,29 +6,33 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import { useNavigate } from 'react-router-dom';
 
-const pages = [
-  { name: 'Patient Admission', path: '/vetgenelhastakabul' },
-  { name: 'Appointments', path: '/addAppointment' },
-  { name: 'Appointment History', path: '/vetgenelmrg' },
-  { name: 'Vaccine Appointment History', path: '/vetgenelarg' },
-  { name: 'Vaccine Add', path: '/vetgenelargadd' },
-  { name: 'Laboratory Tests', path: '/vetgeneltahlil' },
-  { name: 'Laboratory Result Add', path: '/addLabResult' },
-  { name: 'Payment', path: '/payment' },
-  { name: 'Payment History', path: '/vetgenelödemegeçmişi' }
-];
-
-export default function SelectionBar() {
+const SelectionBar = () => {
   const [selectedPage, setSelectedPage] = React.useState();
   const navigate = useNavigate();
 
-  const handlePageClick = (page) => {
-    const role = localStorage.getItem('role'); // Rolü local storage'dan al
-    if (role === 'ROLE_CUSTOMER' && (page.path === '/vetgenelhastakabul' || page.path === '/addAppointment' || page.path ==='/vetgenelargadd'|| page.path ==='/addLabResult'|| page.path ==='/payment')) {
-      alert('Access Denied');
-      return;
-    }
+  const pages = [
+    { name: 'Patient Admission', path: '/vetgenelhastakabul' },
+    { name: 'Appointments', path: '/addAppointment' },
+    { name: 'Appointment History', path: '/vetgenelmrg' },
+    { name: 'Vaccine Appointment History', path: '/vetgenelarg' },
+    { name: 'Laboratory Tests', path: '/vetgeneltahlil' },
+    { name: 'Laboratory Result Add', path: '/addLabResult' },
+    { name: 'Payment', path: '/payment' },
+    { name: 'Payment History', path: '/vetgenelödemegeçmişi' }
+  ];
 
+  // Eğer kullanıcı ROLE_CUSTOMER ise ve sayfa ROLE_CUSTOMER için engellenmişse, pages dizisinden kaldır
+  if (localStorage.getItem('role') === 'ROLE_CUSTOMER') {
+    const forbiddenPages = ['/vetgenelhastakabul', '/addAppointment', '/vetgenelargadd', '/addLabResult', '/payment'];
+    forbiddenPages.forEach(forbiddenPage => {
+      const index = pages.findIndex(page => page.path === forbiddenPage);
+      if (index !== -1) {
+        pages.splice(index, 1);
+      }
+    });
+  }
+
+  const handlePageClick = (page) => {
     setSelectedPage(page.path);
     navigate(page.path);
   };
@@ -65,4 +69,6 @@ export default function SelectionBar() {
       </nav>
     </Box>
   );
-}
+};
+
+export default SelectionBar;

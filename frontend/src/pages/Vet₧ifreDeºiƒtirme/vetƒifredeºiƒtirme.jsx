@@ -1,73 +1,94 @@
-import React, {useEffect, useState} from 'react';
-import axios from "axios";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
-const VetŞifreDeğiştirme = () => {
-    const [mevcutŞifre, setMevcutŞifre] = useState('');
-    const [yeniŞifre, setYeniŞifre] = useState('');
-    const [yeniŞifreTekrar, setYeniŞifreTekrar] = useState('');
-    const [user, setUser] = useState('');
-
+const VetSifreDegistirme = () => {
+    const [mevcutSifre, setMevcutSifre] = useState('');
+    const [yeniSifre, setYeniSifre] = useState('');
+    const [yeniSifreTekrar, setYeniSifreTekrar] = useState('');
+    const [userId, setUserId] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const token = localStorage.getItem('token');
 
     useEffect(() => {
-        const user = JSON.parse(localStorage.getItem('authUser'));
-        setUser(user);
+        const storedUserId = localStorage.getItem('userId');
+        if (storedUserId) {
+            setUserId(storedUserId);
+        }
     }, []);
 
     const sifreDegistir = async () => {
-        if (yeniŞifre === yeniŞifreTekrar) {
+        if (!userId) {
+            alert('Kullanıcı bilgisi bulunamadı. Lütfen tekrar giriş yapın.');
+            return;
+        }
 
-            const body = {
-                id: Number(user.id),
-                password: yeniŞifre
-            };
-
-            const response = await axios.put(`http://localhost:8080/api/users/change-password`, body);
-
-            alert('Şifre değiştirildi');
-        } else {
+        if (yeniSifre !== yeniSifreTekrar) {
             alert('Şifreler uyuşmuyor');
+            return;
+        }
+
+        setLoading(true);
+
+        const body = {
+            oldPassword: mevcutSifre,
+            newPassword: yeniSifre
+        };
+
+        try {
+            const response = await axios.put(`http://localhost:8080/api/users/change-password/${userId}`, body, {
+                headers: {
+                    Authorization: `Bearer ${token}`, // Bearer tokeni Authorization başlığı altında gönderiyoruz
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            console.log('Şifre değiştirildi:', response.data);
+            alert('Şifre değiştirildi');
+        } catch (error) {
+            console.error('Şifre değiştirilirken bir hata oluştu:', error.response ? error.response.data : error.message);
+            alert('Şifre değiştirilirken bir hata oluştu');
+        } finally {
+            setLoading(false);
         }
     };
 
-
     return (
-        <div style={{ width: "100%", padding: "10px" }}>
-            <h1 style={{color: '#6c9286'}}>Animal Clinic Pro</h1>
+        <div style={{ width: '100%', padding: '10px' }}>
+            <h1 style={{ color: '#6c9286' }}>Animal Clinic Pro</h1>
             <form>
                 <div className="mb-2">
-                    <label htmlFor="mevcutşifre" className="form-label">Current Password:</label>
+                    <label htmlFor="mevcutSifre" className="form-label">Current Password:</label>
                     <input
                         type="password"
-                        value={mevcutŞifre}
+                        value={mevcutSifre}
                         className="form-control"
-                        onChange={(e) => setMevcutŞifre(e.target.value)}
+                        onChange={(e) => setMevcutSifre(e.target.value)}
                     />
                 </div>
-                <br/>
+                <br />
                 <div className="mb-3">
-                    <label htmlFor="yenişifre" className="form-label"> New Password:</label>
+                    <label htmlFor="yeniSifre" className="form-label">New Password:</label>
                     <input
                         type="password"
-                        value={yeniŞifre}
+                        value={yeniSifre}
                         className="form-control"
-                        onChange={(e) => setYeniŞifre(e.target.value)}
+                        onChange={(e) => setYeniSifre(e.target.value)}
                     />
                 </div>
-                <br/>
+                <br />
                 <div className="mb-3">
-                    <label htmlFor="yenişifretekrar" className="form-label">New Password Repeat:</label>
+                    <label htmlFor="yeniSifreTekrar" className="form-label">New Password Repeat:</label>
                     <input
                         type="password"
-                        value={yeniŞifreTekrar}
+                        value={yeniSifreTekrar}
                         className="form-control"
-                        onChange={(e) => setYeniŞifreTekrar(e.target.value)}
+                        onChange={(e) => setYeniSifreTekrar(e.target.value)}
                     />
                 </div>
-                <br/>
+                <br />
                 <div className="text-center">
-                    <button className="btn btn-primary" type="button"
-                            onClick={sifreDegistir}>
-                        Change Password
+                    <button className="btn btn-primary" type="button" onClick={sifreDegistir} disabled={loading}>
+                        {loading ? 'Changing Password...' : 'Change Password'}
                     </button>
                 </div>
             </form>
@@ -75,4 +96,4 @@ const VetŞifreDeğiştirme = () => {
     );
 };
 
-export default VetŞifreDeğiştirme;
+export default VetSifreDegistirme;

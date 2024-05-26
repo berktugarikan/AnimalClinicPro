@@ -12,12 +12,24 @@ export function AdminPage() {
   const getUsers = useCallback(async () => {
     setLoading(true);
     try {
-      const clinicId = localStorage.getItem("clinicId");
+      const clinicId = localStorage.getItem("clinicId"); // Local storage'dan clinic ID'yi al
+      const token = localStorage.getItem("token"); // Local storage'dan token'i al
+
+      if (!clinicId) {
+        console.error("Clinic ID is not found in localStorage.");
+        setLoading(false);
+        return;
+      }
+
       const response = await axios.get(`http://localhost:8080/api/users`, {
+        headers: {
+          'Authorization': `Bearer ${token}` // Token'i header'a ekle
+        },
         params: {
-          clinicId: clinicId || undefined,
+          clinicId: clinicId, // Clinic ID'yi query parametresi olarak ekle
         }
       });
+
       if (response.data.length > 0) {
         const reversedData = response.data.reverse();
         setUsers(reversedData);
@@ -35,7 +47,16 @@ export function AdminPage() {
 
   const updateUserRole = async (username, newRole) => {
     try {
-      await axios.put(`http://localhost:8080/api/users/role/${username}`, { role: newRole });
+      const token = localStorage.getItem("token"); // Token'i al
+      await axios.put(
+        `http://localhost:8080/api/users/role/${username}`,
+        { role: newRole },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}` // Token'i header'a ekle
+          }
+        }
+      );
       // Kullanıcı rolleri güncellendikten sonra tekrar kullanıcıları getir
       getUsers();
     } catch (error) {
