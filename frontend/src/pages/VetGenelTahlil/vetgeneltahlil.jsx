@@ -1,33 +1,31 @@
-import * as React from 'react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-
 
 const VetGenelTahlil = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [loading, setLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
-
     const [results, setResults] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
-            axios.get('http://localhost:8080/api/lab-tests')
-                .then(response => {
+            const userId = localStorage.getItem('userId');
+            if (userId) {
+                try {
+                    const response = await axios.get(`http://localhost:8080/api/lab-tests/veterinarian/${userId}`);
                     if (response?.data?.length > 0) {
                         const reversedResults = response.data.reverse();
                         setResults(reversedResults);
                     }
-                })
-                .catch(error => {
-                    console.log(error);
-                })
+                } catch (error) {
+                    console.error('Error fetching lab test data', error);
+                }
+            }
         };
         fetchData();
     }, []);
-
 
     const endpointParam = location.pathname;
 
@@ -37,15 +35,14 @@ const VetGenelTahlil = () => {
         }
     }, [endpointParam, navigate]);
 
-
     const filteredLabResults = results.filter(
         (result) =>
             result?.customer?.firstname?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             result?.customer?.surname?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             result?.customer?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             result?.animal?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            result?.veterinarian?.firstname.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            result?.veterinarian?.surname.toLowerCase().includes(searchTerm.toLowerCase())
+            result?.veterinarian?.firstname?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            result?.veterinarian?.surname?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     return (
@@ -53,12 +50,7 @@ const VetGenelTahlil = () => {
             <h2>Lab Results</h2>
 
             <div className='d-flex flex-row'>
-
-                {/* <div><SelectionBar/></div> */}
-
-
                 <div className='flex-grow-1'>
-
                     <div>
                         <input
                             type="text"
@@ -78,9 +70,10 @@ const VetGenelTahlil = () => {
                                     <th scope='col'>Test Status</th>
                                 </tr>
 
-
                                 {loading ? (
-                                    <Spinner />
+                                    <tr>
+                                        <td colSpan="6">Loading...</td>
+                                    </tr>
                                 ) : filteredLabResults.length > 0 ? (
                                     filteredLabResults.map((result) => (
                                         <tr key={result.id}>
@@ -98,23 +91,9 @@ const VetGenelTahlil = () => {
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="3">No users found</td>
+                                        <td colSpan="6">No lab results found</td>
                                     </tr>
                                 )}
-                                {/* {results.map((result) => (
-                                    <tr key={result.id}>
-                                        <td>{result?.veterinarian?.firstname} - {result?.veterinarian?.surname}</td>
-                                        <td>{result?.customer?.firstname} - {result?.customer?.surname}</td>
-                                        <td>{result?.animal?.name}</td>
-                                        <td>{result.testDate}</td>
-                                        <td>{result.testDescription}</td>
-                                        <td>
-                                            <span className="badge rounded-pill text-bg-primary">
-                                                {result.testStatus}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                ))} */}
                             </thead>
                         </table>
                     </div>

@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react';
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import toast from 'react-hot-toast';
@@ -9,7 +8,7 @@ function VetGenelArgAdd() {
         'PENDING',
         'COMPLETED',
         'CANCELLED'
-    ]
+    ];
     const [result, setNewResult] = useState({
         vaccinationDate: '',
         vaccinationDescription: '',
@@ -18,7 +17,7 @@ function VetGenelArgAdd() {
         animalId: '',
         vaccinationStatus: statues[0],
         vaccinationTime: ''
-    })
+    });
 
     const today = new Date().toISOString().split('T')[0];
 
@@ -71,7 +70,7 @@ function VetGenelArgAdd() {
 
     const handleCreateResult = async () => {
         axios.post("http://localhost:8080/api/vaccinations", result, {
-            headers: "Bearer " + localStorage.getItem("token")
+            headers: { Authorization: "Bearer " + localStorage.getItem("token") }
         })
             .then(response => {
                 if (response.status === 200) {
@@ -84,16 +83,16 @@ function VetGenelArgAdd() {
     };
 
     useEffect(() => {
-        const clinicId = localStorage.getItem("clinicId"); // Local storage'dan clinic ID'yi al
+        const clinicId = localStorage.getItem("clinicId");
 
         const fetchVeterinarian = async () => {
             try {
                 const response = await axios.get(`http://localhost:8080/api/users/${localStorage.getItem("userId")}`);
                 setVeterinarians([response.data]);
                 if (response.data) {
-                    setFormData((prevData) => ({
+                    setNewResult((prevData) => ({
                         ...prevData,
-                        veterinarianId: vetResponse.data.id
+                        veterinarianId: response.data.id
                     }));
                 }
             } catch (error) {
@@ -102,16 +101,16 @@ function VetGenelArgAdd() {
         };
 
         const fetchCustomer = async () => {
-            const clinicId = localStorage.getItem("clinicId"); // Local storage'dan clinic ID'yi al
+            const clinicId = localStorage.getItem("clinicId");
             const response = await axios.get("http://localhost:8080/api/users/customers", {
                 params: {
-                    clinicId: clinicId // Clinic ID'yi query parametresi olarak ekle
+                    clinicId: clinicId
                 }
             })
                 .then(response => {
                     setCustomers(response.data);
                     if (response.data.length > 0) {
-                        setFormData((prevData) => ({
+                        setNewResult((prevData) => ({
                             ...prevData,
                             customerId: response.data[0].id
                         }));
@@ -132,26 +131,26 @@ function VetGenelArgAdd() {
         fetchAppointments();
     }, []);
 
-
     useEffect(() => {
-        axios.get(`http://localhost:8080/api/animals/owner/${customers[0]?.id}`)
-            .then(response => {
-                setAnimals(response.data);
-                if (response.data.length > 0) {
-                    setNewResult((prevData) => ({
-                        ...prevData,
-                        animalId: response.data[0].id
-                    }));
-                }
-            })
-            .catch(error => {
-                console.log(error);
-            })
-    }, [customers])
+        if (customers.length > 0) {
+            axios.get(`http://localhost:8080/api/animals/owner/${customers[0].id}`)
+                .then(response => {
+                    setAnimals(response.data);
+                    if (response.data.length > 0) {
+                        setNewResult((prevData) => ({
+                            ...prevData,
+                            animalId: response.data[0].id
+                        }));
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                })
+        }
+    }, [customers]);
 
     const handleChangeVeterenerian = (e) => {
-        const veterinarianId = +e.target.value;
-        result.veterinarianId = veterinarianId;
+        const veterinarianId = e.target.value;
         setNewResult(prevData => ({
             ...prevData,
             veterinarianId: veterinarianId
@@ -159,24 +158,33 @@ function VetGenelArgAdd() {
     };
 
     const handleChangeCustomer = (e) => {
-        const customerId = +e.target.value;
-        result.customerId = customerId;
+        const customerId = e.target.value;
+        setNewResult(prevData => ({
+            ...prevData,
+            customerId: customerId,
+            animalId: ''
+        }));
         axios.get(`http://localhost:8080/api/animals/owner/${customerId}`)
             .then(response => {
                 setAnimals(response.data);
-                setNewResult(prevData => ({
-                    ...prevData,
-                    animalId: response.data.length > 0 ? response.data[0].id : 0
-                }));
+                if (response.data.length > 0) {
+                    setNewResult(prevData => ({
+                        ...prevData,
+                        animalId: response.data[0].id
+                    }));
+                }
             })
             .catch(error => {
                 console.log(error);
             });
     };
 
-
     const handleChangeAnimal = (e) => {
-        result.animalId = + e.target.value
+        const animalId = e.target.value;
+        setNewResult(prevData => ({
+            ...prevData,
+            animalId: animalId
+        }));
     };
 
     return (
@@ -188,7 +196,7 @@ function VetGenelArgAdd() {
                     <form>
                         <div className="mb-3">
                             <label htmlFor="Veterenerian" className="form-label">Veterenerian</label>
-                            <select value={result.veterinarianId} name='veterinarianId' onChange={handleChangeVeterenerian} defaultValue={localStorage.getItem("userId")}>
+                            <select value={result.veterinarianId} name='veterinarianId' onChange={handleChangeVeterenerian}>
                                 {veterinarians.map((item, index) => (
                                     <option key={index} value={item.id}>{item.firstname} {item.surname}</option>
                                 ))}
@@ -203,7 +211,7 @@ function VetGenelArgAdd() {
                             </select>
                         </div>
                         <div className="mb-3">
-                            <label htmlFor="" className="form-label">Animal</label>
+                            <label htmlFor="Animal" className="form-label">Animal</label>
                             <select value={result.animalId} name='animalId' onChange={handleChangeAnimal}>
                                 {animals.map((item, index) => (
                                     <option key={index} value={item.id}>{item.name} - ({item.type})</option>

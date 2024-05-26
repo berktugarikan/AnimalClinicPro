@@ -61,20 +61,22 @@ export function AddAppointment() {
     }, []);
 
     useEffect(() => {
-        axios.get(`http://localhost:8080/api/animals/owner/${customer[0]?.id}`)
-            .then(response => {
-                setAnimal(response.data);
-                if (response.data.length > 0) {
-                    setFormData((prevData) => ({
-                        ...prevData,
-                        animalId: response.data[0].id
-                    }));
-                }
-            })
-            .catch(error => {
-                console.log(error);
-            })
-    }, [customer]);
+        if (formData.customerId) {
+            axios.get(`http://localhost:8080/api/animals/owner/${formData.customerId}`)
+                .then(response => {
+                    setAnimal(response.data);
+                    if (response.data.length > 0) {
+                        setFormData((prevData) => ({
+                            ...prevData,
+                            animalId: response.data[0].id
+                        }));
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                })
+        }
+    }, [formData.customerId]);
 
     function timeInMinutes(timeString) {
         const [hours, minutes] = timeString.split(':').map(Number);
@@ -83,7 +85,7 @@ export function AddAppointment() {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        
+
         if (name === 'dateTime') {
             const selectedTimeInMinutes = timeInMinutes(value);
             const selectedDaysAppointments = appointments.filter((appointment) => appointment.appointmentDate === formData.date)
@@ -124,7 +126,8 @@ export function AddAppointment() {
         const customerId = +e.target.value;
         setFormData((prevData) => ({
             ...prevData,
-            customerId: customerId
+            customerId: customerId,
+            animalId: 0 // Reset the animalId when customer changes
         }));
         axios.get(`http://localhost:8080/api/animals/owner/${customerId}`)
             .then(response => {
@@ -142,11 +145,14 @@ export function AddAppointment() {
     };
 
     const handleChangeAnimal = (e) => {
-        formData.animalId = + e.target.value
+        const animalId = +e.target.value;
+        setFormData((prevData) => ({
+            ...prevData,
+            animalId: animalId
+        }));
     };
 
     const handleSubmit = async (e) => {
-
         e.preventDefault();
         axios.post('http://localhost:8080/api/appointments', formData)
             .then(response => {
@@ -157,7 +163,6 @@ export function AddAppointment() {
             .catch(error => {
                 console.log(error);
             })
-
     };
 
     return (
@@ -175,7 +180,7 @@ export function AddAppointment() {
                             </select>
                         </div>
                         <div className="mb-3">
-                            <label htmlFor="" className="form-label">Animal</label>
+                            <label htmlFor="Animal" className="form-label">Animal</label>
                             <select value={formData.animalId} name='animalId' onChange={handleChangeAnimal}>
                                 {animal.map((item, index) => (
                                     <option key={index} value={item.id}>{item.name} - ({item.type})</option>

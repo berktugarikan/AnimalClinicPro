@@ -25,6 +25,7 @@ import Layout from "@/shared/components/Layout";
 import VetÇıkış from "../pages/VetÇìkìƒ/vetçìkìƒ";
 import VetŞifreDeğiştirme from "../pages/Vet₧ifreDeºiƒtirme/vetƒifredeºiƒtirme";
 import Payment from "@/pages/Payment/Payment";
+import { AdminPage } from "@/pages/Admin/Admin";
 
 
 
@@ -139,6 +140,10 @@ export default createBrowserRouter([
                 path: "/payment",
                 Component: Payment,
               },
+              {
+                path: "/admin",
+                Component: AdminPage,
+              }
             //   {
             //     path: "/vetçıkış",
             //     Component: VetÇıkış,
