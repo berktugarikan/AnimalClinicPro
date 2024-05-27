@@ -85,40 +85,17 @@ export function AddAppointment() {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-
-        if (name === 'dateTime') {
-            const selectedTimeInMinutes = timeInMinutes(value);
-            const selectedDaysAppointments = appointments.filter((appointment) => appointment.appointmentDate === formData.date)
-            var available = true;
-
-            selectedDaysAppointments.forEach((app) => {
-                const appStartTimeInMin = timeInMinutes(app.appointmentTime);
-                const appEndTimeInMin = timeInMinutes(app.appointmentTime) + 60;
-
-                if (appStartTimeInMin <= selectedTimeInMinutes && selectedTimeInMinutes < appEndTimeInMin) {
-                    available = false;
-                }
-            })
-
-            if (!available) { return toast.error("Time not Available!") };
-
+        if (name === 'date') {
             setFormData((prevData) => ({
                 ...prevData,
-                [name]: value + ':00',
+                dateTime: '',
+                [name]: value
             }));
         } else {
-            if (name === 'date') {
-                setFormData((prevData) => ({
-                    ...prevData,
-                    dateTime: '',
-                    [name]: value
-                }));
-            } else {
-                setFormData((prevData) => ({
-                    ...prevData,
-                    [name]: value,
-                }));
-            }
+            setFormData((prevData) => ({
+                ...prevData,
+                [name]: value,
+            }));
         }
     };
 
@@ -165,6 +142,95 @@ export function AddAppointment() {
             })
     };
 
+
+    
+    const [vaccinationHistory, setVaccinationHistory] = useState([]);
+    const [appointmentHistory, setAppointmentHistory] = useState([]);
+
+    const fetchVaccinationHistoryByVetId = async () => {
+        try {
+            const response = await axios.get(`http://localhost:8080/api/vaccinations/veterinarian/${formData.veterinarianId}`);
+
+            if (response.data.length > 0) {
+                setVaccinationHistory(response.data);
+                // console.log("History:", response.data)
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    const fetchAppointmentHistoryByVetId = async () => {
+        try {
+            const response = await axios.get(`http://localhost:8080/api/appointments/veterinarian/${formData.veterinarianId}`);
+
+            if (response.data.length > 0) {
+                setAppointmentHistory(response.data);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        fetchVaccinationHistoryByVetId();
+        fetchAppointmentHistoryByVetId();
+    }, [veterinarian])
+
+    const [filteredVaccinationHistory, setFilteredVaccinationHistory] = useState([]);
+    const [filteredAppointmentHistory, setFilteredAppointmentHistory] = useState([]);
+
+    const getVaccinationHistoryBySelectedDate = () => {
+        const history = vaccinationHistory.filter((history) => history.vaccinationDate === formData.date);
+        setFilteredVaccinationHistory(history);
+    }
+    const getAppointmentHistoryBySelectedDate = () => {
+        const history = appointmentHistory.filter((history) => history.appointmentDate === formData.date);
+        setFilteredAppointmentHistory(history);
+    }
+
+    useEffect(() => {
+        getVaccinationHistoryBySelectedDate();
+        getAppointmentHistoryBySelectedDate()
+    }, [vaccinationHistory, appointmentHistory, formData.date])
+
+
+
+    // const timeOptions = [];
+    const [timeOptions, setTimeOptions] = useState([]);
+    const updateTimeOptions = () => {
+        setTimeOptions([]);
+        console.log("updateTimeOptions called");
+        // console.log("updateTimeOptions timeOptions:", timeOptions);
+        // console.log("UpdateTimeOptions filteredVaccinationHistory[0].vaccinationTime: ",filteredVaccinationHistory[0]?.vaccinationTime)
+        for (let hour = 9; hour < 18; hour++) {
+            for (let minute = 0; minute <= 40; minute += 20) {
+                const formattedTime = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:00`;
+                let exists = false;
+                if (formattedTime) {
+                    filteredVaccinationHistory.forEach((history) => {
+                        if (formattedTime === history.vaccinationTime) {
+                            exists = true;
+                        }
+                    })
+                    filteredAppointmentHistory.forEach((history) => {
+                        if (formattedTime === history.appointmentTime) {
+                            exists = true;
+                        }
+                    })
+
+                    if (!exists) {
+                        // timeOptions.push(formattedTime);
+                        setTimeOptions((prev) => [...prev, formattedTime])
+                    }
+                }
+            }
+        }
+    }
+    useEffect(() => {
+        updateTimeOptions()
+    }, [filteredVaccinationHistory, filteredAppointmentHistory])
+
+
     return (
         <div style={{ display: 'flex', width: '100%' }}>
             <div className="card flex-grow-1">
@@ -202,8 +268,12 @@ export function AddAppointment() {
                         </div>
                         <div className="mb-3">
                             <label htmlFor="Appointment_Time" className="form-label">Appointment Time</label>
-                            <input type="time" className="form-control" id="Appointment_Time" name="dateTime"
-                                value={formData.dateTime} onChange={handleChange} required />
+                            <select value={formData.dateTime} name="dateTime" id="Appointment_Time" onChange={handleChange}>
+                                <option value="">Select Time</option>
+                                {timeOptions?.map((time, index) => (
+                                    <option key={index} value={time}>{time}</option>
+                                ))}
+                            </select>
                         </div>
                         <div className="mb-3">
                             <label htmlFor="Appointment_Type" className="form-label">Appointment Type</label>

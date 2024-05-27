@@ -52,27 +52,66 @@ function PastVaccineAppointments() {
   
 
   const [searchTerm, setSearchTerm] = useState("");
+  const [startFilterDate, setStartFilterDate] = useState("");
+  const [endFilterDate, setEndFilterDate] = useState("");
+  const filteredAppoinments = pastAppointments.filter((appointment) => {
+    const appointmentDate = new Date(appointment.appointmentDate); // Convert to Date object
+  
+    // Combine date filtering logic (early return if not applicable)
+    if (startFilterDate !== "" && endFilterDate !== "") {
+      if (appointmentDate < new Date(startFilterDate) || appointmentDate > new Date(endFilterDate)) {
+        return false; // Early return if outside date range
+      }
+    }
 
-  const filteredAppoinments = pastAppointments.filter(
-    (appointment) =>
-      appointment?.customer?.firstname?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      appointment?.customer?.surname?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      appointment?.customer?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      appointment?.animal?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      appointment?.veterinarian?.firstname.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      appointment?.veterinarian?.surname.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+    if (startFilterDate !== "" && endFilterDate === "") {
+      if (appointmentDate < new Date(startFilterDate)) {
+        return false; // Early return if outside date range
+      }
+    }
+
+    if (startFilterDate === "" && endFilterDate !== "") {
+      if (appointmentDate > new Date(endFilterDate)) {
+        return false; // Early return if outside date range
+      }
+    }
+  
+    // Search logic using optional chaining and case-insensitive comparison
+    return (
+      (appointment?.customer?.firstname?.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
+       appointment?.customer?.surname?.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
+       appointment?.customer?.email?.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
+       appointment?.animal?.name?.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
+       appointment?.veterinarian?.firstname?.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
+       appointment?.veterinarian?.surname?.toLowerCase()?.includes(searchTerm.toLowerCase()))
+    );
+  });
 
 
   return (
     <div>
-      <input
-        type="text"
-        placeholder="Search Name"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        style={{ width: '185px', height: '30px', padding: '5px', fontSize: '15px' }}
-      />
+      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <input
+          type="text"
+          placeholder="Search Name"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={{ width: '185px', height: '40px', padding: '5px', fontSize: '15px' }}
+        />
+
+        <div style={{ display: 'flex', flexDirection: 'row', gap: 10 }}>
+          <div className="mb-3">
+            <label htmlFor="startFilterDate" className="form-label">Starting date</label>
+            <input type="date" className="form-control" id="startFilterDate" name="startFilterDate"
+              value={startFilterDate} onChange={(e) => setStartFilterDate(e.target.value)} />
+          </div>
+          <div className="mb-3">
+            <label htmlFor="endFilterDate" className="form-label">Ending date</label>
+            <input type="date" className="form-control" id="endFilterDate" name="endFilterDate"
+              value={endFilterDate} onChange={(e) => setEndFilterDate(e.target.value)} />
+          </div>
+        </div>
+      </div>
       <table className='table table-responsive'>
         <thead>
           <tr>

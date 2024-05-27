@@ -140,7 +140,7 @@ function Payment() {
     
             // Başarılı bir şekilde kaydedildiğinde kullanıcıya bildir
             console.log("Payment successfully saved:", response.data);
-    
+            window.location.reload();
             // Başka bir işlem yapılabilir, örneğin sayfayı yenilemek gibi
         } catch (error) {
             console.error("Error while saving payment:", error);

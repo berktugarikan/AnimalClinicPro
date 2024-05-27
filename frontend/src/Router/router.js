@@ -27,6 +27,7 @@ import VetŞifreDeğiştirme from "../pages/Vet₧ifreDeºiƒtirme/vetƒifredeº
 import Payment from "@/pages/Payment/Payment";
 import { AdminPage } from "@/pages/Admin/Admin";
 import ClinicProduct from "@/pages/ClinicProduct/ClinicProduct";
+import Reminder from "@/pages/Reminder/Reminder";
 
 
 
@@ -148,6 +149,9 @@ export default createBrowserRouter([
               {
                 path: "/clinicproduct",
                 Component: ClinicProduct
+              },
+              {path: "/reminder",
+                Component: Reminder
               }
             //   {
             //     path: "/vetçıkış",

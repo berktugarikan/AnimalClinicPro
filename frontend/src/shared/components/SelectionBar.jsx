@@ -20,7 +20,8 @@ const SelectionBar = () => {
     { name: 'Laboratory Result Add', path: '/addLabResult' },
     { name: 'Payment', path: '/payment' },
     { name: 'Payment History', path: '/vetgenelödemegeçmişi' },
-    {name: 'Clinic Product', path: '/clinicproduct'}
+    {name: 'Clinic Product', path: '/clinicproduct'},
+    {name: 'Reminder', path: '/reminder'}
   ];
 
   // Eğer kullanıcı ROLE_CUSTOMER ise ve sayfa ROLE_CUSTOMER için engellenmişse, pages dizisinden kaldır

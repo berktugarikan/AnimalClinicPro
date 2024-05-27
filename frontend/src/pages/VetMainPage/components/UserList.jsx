@@ -63,22 +63,22 @@ export function UserList() {
   };
 
   const deleteUser = async (userId) => {
-    axios.delete(`http://localhost:8080/api/users/${userId}`, {
-      headers: {
-        'Authorization': 'Bearer ' + localStorage.getItem("token")
-      }
-    })
-      .then(response => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this user?");
+    if (confirmDelete) {
+      try {
+        const response = await axios.delete(`http://localhost:8080/api/users/${userId}`, {
+          headers: {
+            'Authorization': 'Bearer ' + localStorage.getItem("token")
+          }
+        });
         if (response.status === 204) {
           setUsers(users.filter(user => user.id !== userId));
         }
-      })
-      .catch(error => {
+      } catch (error) {
         console.error('Error deleting user:', error);
-      });
-
+      }
+    }
   };
-
   const fetchUserData = async (userId) => {
     try {
       const response = await axios.get(`http://localhost:8080/api/users/${userId}`);

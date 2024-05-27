@@ -187,6 +187,92 @@ function VetGenelArgAdd() {
         }));
     };
 
+
+    const [vaccinationHistory, setVaccinationHistory] = useState([]);
+    const [appointmentHistory, setAppointmentHistory] = useState([]);
+
+    const fetchVaccinationHistoryByVetId = async () => {
+        try {
+            const response = await axios.get(`http://localhost:8080/api/vaccinations/veterinarian/${result.veterinarianId}`);
+
+            if (response.data.length > 0) {
+                setVaccinationHistory(response.data);
+                // console.log("History:", response.data)
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    const fetchAppointmentHistoryByVetId = async () => {
+        try {
+            const response = await axios.get(`http://localhost:8080/api/appointments/veterinarian/${result.veterinarianId}`);
+
+            if (response.data.length > 0) {
+                setAppointmentHistory(response.data);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        fetchVaccinationHistoryByVetId();
+        fetchAppointmentHistoryByVetId();
+    }, [result.veterinarianId])
+
+    const [filteredVaccinationHistory, setFilteredVaccinationHistory] = useState([]);
+    const [filteredAppointmentHistory, setFilteredAppointmentHistory] = useState([]);
+
+    const getVaccinationHistoryBySelectedDate = () => {
+        const history = vaccinationHistory.filter((history) => history.vaccinationDate === result.vaccinationDate);
+        setFilteredVaccinationHistory(history);
+    }
+    const getAppointmentHistoryBySelectedDate = () => {
+        const history = appointmentHistory.filter((history) => history.appointmentDate === result.vaccinationDate);
+        setFilteredAppointmentHistory(history);
+    }
+
+    useEffect(() => {
+        getVaccinationHistoryBySelectedDate();
+        getAppointmentHistoryBySelectedDate()
+    }, [vaccinationHistory, appointmentHistory, result.vaccinationDate])
+
+    const [timeOptions, setTimeOptions] = useState([]);
+    const updateTimeOptions = () => {
+    const options = [];
+    for (let hour = 9; hour < 18; hour++) {
+        for (let minute = 0; minute <= 40; minute += 20) {
+            const formattedTime = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:00`;
+            let exists = false;
+            if (formattedTime) {
+                filteredVaccinationHistory.forEach((history) => {
+                    if (formattedTime === history.vaccinationTime) {
+                        exists = true;
+                    }
+                });
+                filteredAppointmentHistory.forEach((history) => {
+                    if (formattedTime === history.appointmentTime) {
+                        exists = true;
+                    }
+                });
+
+                if (!exists) {
+                    options.push(formattedTime);
+                }
+            }
+        }
+    }
+    setTimeOptions(options);
+};
+
+
+    useEffect(() => {
+        updateTimeOptions()
+    }, [filteredVaccinationHistory, filteredAppointmentHistory])
+
+
+
+
     return (
         <div style={{ display: 'flex', width: '100%' }}>
 
@@ -227,14 +313,18 @@ function VetGenelArgAdd() {
                             </select>
                         </div>
                         <div className="mb-3">
-                            <label htmlFor="Appointment_Date" className="form-label">Appointment Date</label>
+                            <label htmlFor="Appointment_Date" className="form-label">Vaccine Date</label>
                             <input type="date" className="form-control" id="Appointment_Date" name="vaccinationDate"
                                 value={result.vaccinationDate} onChange={handleInputChange} min={today} required />
                         </div>
                         <div className="mb-3">
-                            <label htmlFor="Appointment_Time" className="form-label">Appointment Time</label>
-                            <input type="time" className="form-control" id="Appointment_Time" name="vaccinationTime"
-                                value={result.vaccinationTime} onChange={handleInputChange} required />
+                            <label htmlFor="Appointment_Time" className="form-label">Vaccine Time</label>
+                            <select value={result.vaccinationTime} name="vaccinationTime" id="Appointment_Time" onChange={handleInputChange}>
+                                <option value="">Select Time</option>
+                                {timeOptions?.map((time, index) => (
+                                    <option key={index} value={time}>{time}</option>
+                                ))}
+                            </select>
                         </div>
                         <div className="mb-3">
                             <label htmlFor="id" className="form-label">

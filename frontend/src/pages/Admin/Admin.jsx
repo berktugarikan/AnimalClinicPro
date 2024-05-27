@@ -6,14 +6,23 @@ import { useNavigate } from "react-router-dom";
 export function AdminPage() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
-
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const role = localStorage.getItem('role'); // Rolü local storage'dan al
+    if (role !== 'ROLE_ADMIN') {
+      alert('Access Denied');
+      navigate('/vetmainpage'); // Erişim engellendiğinde ana sayfaya yönlendir
+    } else {
+      getUsers(); // Rolü admin ise kullanıcıları getir
+    }
+  }, []);
 
   const getUsers = useCallback(async () => {
     setLoading(true);
     try {
-      const clinicId = localStorage.getItem("clinicId"); // Local storage'dan clinic ID'yi al
-      const token = localStorage.getItem("token"); // Local storage'dan token'i al
+      const clinicId = localStorage.getItem("clinicId");
+      const token = localStorage.getItem("token");
 
       if (!clinicId) {
         console.error("Clinic ID is not found in localStorage.");
@@ -23,10 +32,10 @@ export function AdminPage() {
 
       const response = await axios.get(`http://localhost:8080/api/users/clinic/${clinicId}/customers-and-vets`, {
         headers: {
-          'Authorization': `Bearer ${token}` // Token'i header'a ekle
+          'Authorization': `Bearer ${token}`
         },
         params: {
-          clinicId: clinicId, // Clinic ID'yi query parametresi olarak ekle
+          clinicId: clinicId,
         }
       });
 
@@ -41,23 +50,18 @@ export function AdminPage() {
     }
   }, []);
 
-  useEffect(() => {
-    getUsers();
-  }, [getUsers]);
-
   const updateUserRole = async (username, newRole) => {
     try {
-      const token = localStorage.getItem("token"); // Token'i al
+      const token = localStorage.getItem("token");
       await axios.put(
         `http://localhost:8080/api/users/role/${username}`,
         { role: newRole },
         {
           headers: {
-            'Authorization': `Bearer ${token}` // Token'i header'a ekle
+            'Authorization': `Bearer ${token}`
           }
         }
       );
-      // Kullanıcı rolleri güncellendikten sonra tekrar kullanıcıları getir
       getUsers();
     } catch (error) {
       console.error("Error updating user role:", error);
