@@ -89,6 +89,7 @@ const PetCard = () => {
         length: "",
         weight: "",
         chipNumber: ""
+       
         // Diğer gerekli alanları buraya ekleyebilirsiniz
     });
 
@@ -107,6 +108,39 @@ const PetCard = () => {
         }
     }, []);
 
+    const fetchPetData = async (petId) => {
+        try {
+            const response = await axios.get(`http://localhost:8080/api/animals/${petId}`);
+            setSelectedPet(response.data);
+            setUpdateData(response.data);
+            console.log(response.data);
+        } catch (error) {
+            console.error('Error fetching user data:', error);
+        }
+    };
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setUpdateData({
+            ...updateData,
+            [name]: value
+        });
+    };
+
+    const updatePet = async () => {
+        const { id, ...updatedPet } = updateData;
+       
+        await axios.put(`http://localhost:8080/api/animals/${selectedPet.id}`, updatedPet)
+            .then(response => {
+                if (response.status === 200) {
+                    getUsers();
+                    closeModal();
+                }
+            })
+            .catch(error => {
+                console.error('Error updating pet:', error);
+            });
+    };
 
     const getAnimalTypes = useCallback(async () => {
         try {
@@ -131,40 +165,7 @@ const PetCard = () => {
     }, []);
 
 
-    const fetchPetData = async (petId) => {
-        try {
-            const response = await axios.get(`http://localhost:8080/api/animals/${petId}`);
-            setSelectedPet(response.data);
-            setUpdateData(response.data);
-            console.log(response.data);
-        } catch (error) {
-            console.error('Error fetching user data:', error);
-        }
-    };
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setUpdateData({
-            ...updateData,
-            [name]: value
-        });
-    };
-
-    const updatePet = async () => {
-        const { id, ...updatedPet } = updateData;
-        // The userId is missing
-        await axios.put(`http://localhost:8080/api/animals/${selectedPet.id}`, updatedPet)
-            .then(response => {
-                if (response.status === 200) {
-                    getUsers();
-                    closeModal();
-                }
-            })
-            .catch(error => {
-                console.error('Error updating user:', error);
-            })
-    }
-
+   
 
 
     return petData && petData?.length > 0 && (

@@ -21,7 +21,7 @@ export function AdminPage() {
         return;
       }
 
-      const response = await axios.get(`http://localhost:8080/api/users`, {
+      const response = await axios.get(`http://localhost:8080/api/users/clinic/${clinicId}/customers-and-vets`, {
         headers: {
           'Authorization': `Bearer ${token}` // Token'i header'a ekle
         },

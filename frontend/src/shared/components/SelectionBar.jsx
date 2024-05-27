@@ -14,16 +14,18 @@ const SelectionBar = () => {
     { name: 'Patient Admission', path: '/vetgenelhastakabul' },
     { name: 'Appointments', path: '/addAppointment' },
     { name: 'Appointment History', path: '/vetgenelmrg' },
+    { name: 'Vaccine Add', path: '/vetgenelargadd' },
     { name: 'Vaccine Appointment History', path: '/vetgenelarg' },
     { name: 'Laboratory Tests', path: '/vetgeneltahlil' },
     { name: 'Laboratory Result Add', path: '/addLabResult' },
     { name: 'Payment', path: '/payment' },
-    { name: 'Payment History', path: '/vetgenelödemegeçmişi' }
+    { name: 'Payment History', path: '/vetgenelödemegeçmişi' },
+    {name: 'Clinic Product', path: '/clinicproduct'}
   ];
 
   // Eğer kullanıcı ROLE_CUSTOMER ise ve sayfa ROLE_CUSTOMER için engellenmişse, pages dizisinden kaldır
   if (localStorage.getItem('role') === 'ROLE_CUSTOMER') {
-    const forbiddenPages = ['/vetgenelhastakabul', '/addAppointment', '/vetgenelargadd', '/addLabResult', '/payment'];
+    const forbiddenPages = ['/vetgenelhastakabul', '/addAppointment', '/vetgenelargadd', '/addLabResult', '/payment', '/clinicproduct', '/vetgenelargadd'];
     forbiddenPages.forEach(forbiddenPage => {
       const index = pages.findIndex(page => page.path === forbiddenPage);
       if (index !== -1) {

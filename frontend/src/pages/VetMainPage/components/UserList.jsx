@@ -17,8 +17,7 @@ export function UserList() {
     firstname: "",
     surname: "",
     email: "",
-    phone: ""
-    // Diğer gerekli alanları buraya ekleyebilirsiniz
+    phoneNumber: ""
   });
 
   const role = localStorage.getItem('role'); // Rolü local storage'dan al
@@ -76,16 +75,28 @@ export function UserList() {
       })
       .catch(error => {
         console.error('Error deleting user:', error);
-      })
+      });
 
   };
 
   const fetchUserData = async (userId) => {
     try {
       const response = await axios.get(`http://localhost:8080/api/users/${userId}`);
-      setSelectedUserData(response.data);
-      setUpdateData(response.data);
-      console.log(response.data);
+      const userData = response.data;
+      // Gelen response'un içinde birthdate varsa
+      if (userData.birthdate) {
+        setSelectedUserData({
+          ...userData,
+          birthdate: userData.birthdate
+        });
+        setUpdateData({
+          ...userData,
+          birthdate: userData.birthdate
+        });
+      } else {
+        setSelectedUserData(userData);
+        setUpdateData(userData);
+      }
     } catch (error) {
       console.error('Error fetching user data:', error);
     }
@@ -106,8 +117,18 @@ export function UserList() {
   );
 
   const updateUser = async () => {
-    const { id, ...updatedUser } = updateData;
-    await axios.put(`http://localhost:8080/api/users/${selectedUserId}`, updatedUser)
+    const updatedUser = {
+      ...selectedUserData,
+      firstname: updateData.firstname,
+      surname: updateData.surname,
+      email: updateData.email,
+      phoneNumber: updateData.phoneNumber
+    };
+    await axios.put(`http://localhost:8080/api/users/${selectedUserId}`, updatedUser, {
+      headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem("token")
+      }
+    })
       .then(response => {
         if (response.status === 200) {
           getUsers();
@@ -116,7 +137,7 @@ export function UserList() {
       })
       .catch(error => {
         console.error('Error updating user:', error);
-      })
+      });
   }
 
   const handleInputChange = (e) => {
@@ -208,10 +229,9 @@ export function UserList() {
                       <input type="email" className="form-control" id="email" name="email" value={updateData.email} onChange={handleInputChange} />
                     </div>
                     <div className="form-group">
-                      <label htmlFor="phone">Phone</label>
-                      <input type="text" className="form-control" id="phone" name="phone" value={updateData.phone} onChange={handleInputChange} /> {/* Telefon numarası giriş alanı */}
+                      <label htmlFor="phoneNumber">Phone</label>
+                      <input type="text" className="form-control" id="phoneNumber" name="phoneNumber" value={updateData.phoneNumber} onChange={handleInputChange} /> {/* Telefon numarası giriş alanı */}
                     </div>
-                    {/* Diğer gerekli alanları buraya ekleyebilirsiniz */}
                     <button type="button" className="btn btn-primary" onClick={updateUser}>Update</button>
                   </>
                 )}
