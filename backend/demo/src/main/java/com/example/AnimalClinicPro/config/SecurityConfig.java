@@ -41,8 +41,8 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/api/users/**").hasAnyRole("VETERINARIAN")
-                        .requestMatchers(HttpMethod.PUT, "/api/users/**").hasAnyRole("VETERINARIAN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/users/**").hasAnyRole("VETERINARIAN", "ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/users/**").hasAnyRole("VETERINARIAN", "ADMIN","CUSTOMER")
                         /*
                         .requestMatchers(HttpMethod.GET, "/api/users/**").hasAnyRole("VETERINARIAN", "CUSTOMER")
                         .requestMatchers(HttpMethod.PUT, "/api/users/**").hasAnyRole("CUSTOMER")

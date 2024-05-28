@@ -1,15 +1,13 @@
 package com.example.AnimalClinicPro.service;
 
-import com.example.AnimalClinicPro.dto.AnimalDto;
-import com.example.AnimalClinicPro.dto.CreateLabTestRequest;
-import com.example.AnimalClinicPro.dto.LabTestDto;
-import com.example.AnimalClinicPro.dto.UserDto;
+import com.example.AnimalClinicPro.dto.*;
 import com.example.AnimalClinicPro.entity.LabTest;
 import com.example.AnimalClinicPro.entity.User;
 import com.example.AnimalClinicPro.repository.LabTestRepository;
 import com.example.AnimalClinicPro.utils.SqlDateConverter;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -78,7 +76,7 @@ public class LabTestService {
         return convert(findLabTestById(id));
     }
 
-    private LabTestDto convert(LabTest labTest) {
+    public LabTestDto convert(LabTest labTest) {
         User veterinarian = userService.getUserById(labTest.getVeterinarianId());
         return new LabTestDto(
                 labTest.getId(),
@@ -89,4 +87,29 @@ public class LabTestService {
                 UserDto.convert(labTest.getAnimal().getUser()),
                 UserDto.convert(veterinarian));
     }
+
+    public List<LabTestDto> geLabTetsByCustomerId(Long customerId) {
+        return labTestRepository.findByCustomerId(customerId)
+                .stream()
+                .map(this::convert)
+                .collect(Collectors.toList());
+    }
+
+    public List<LabTestDto> findLabTestsByVeterinarianClinic(Long veterinarianId) {
+        User userById = userService.getUserById(veterinarianId);
+        List<User> usersBySameClinic = userService.findUsersBySameClinic(userById.getClinic().getId());
+        List<LabTest> labTests = new ArrayList<>();
+        for (User user : usersBySameClinic) {
+            List<LabTest> userLabTests = labTestRepository.findByVeterinarianId(user.getId());
+            for (LabTest labTest : userLabTests) {
+                if (!labTests.contains(labTest)) {
+                    labTests.add(labTest);
+                }
+            }
+        }
+        return labTests.stream()
+                .map(this::convert)
+                .collect(Collectors.toList());
+    }
+
 }

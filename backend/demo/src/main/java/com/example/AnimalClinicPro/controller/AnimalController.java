@@ -1,5 +1,7 @@
 package com.example.AnimalClinicPro.controller;
 
+import com.example.AnimalClinicPro.dto.AnimalClinicDto;
+import com.example.AnimalClinicPro.dto.AnimalCustomerDto;
 import com.example.AnimalClinicPro.dto.AnimalDto;
 import com.example.AnimalClinicPro.dto.CreateAnimalRequest;
 import com.example.AnimalClinicPro.entity.Animal;
@@ -42,6 +44,10 @@ public class AnimalController {
     public ResponseEntity<List<AnimalDto>> getAnimalsByUserId(@PathVariable Long userId) {
         return ResponseEntity.ok(animalService.getAnimalsByUserId(userId));
     }
+    @GetMapping("/owner/customer/{userId}")
+    public ResponseEntity<List<AnimalCustomerDto>> getAnimalsByUserIdAsCustomerDto(@PathVariable Long userId) {
+        return ResponseEntity.ok(animalService.getAnimalsByUserIdAsCustomerDto(userId));
+    }
 
     @PostMapping
     public ResponseEntity<AnimalDto> createAnimal(@RequestBody CreateAnimalRequest request) {
@@ -57,5 +63,9 @@ public class AnimalController {
     public ResponseEntity<Void> deleteAnimal(@PathVariable Long id) {
         animalService.deleteAnimalById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    @GetMapping("/clinic/{clinicId}")
+    public ResponseEntity<List<AnimalClinicDto>> getAnimalsByClinic(@PathVariable Long clinicId) {
+        return ResponseEntity.ok(animalService.findAnimalsByClinic(clinicId));
     }
 }

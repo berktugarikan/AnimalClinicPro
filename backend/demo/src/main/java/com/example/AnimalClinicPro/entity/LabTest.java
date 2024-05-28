@@ -2,6 +2,7 @@ package com.example.AnimalClinicPro.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
@@ -15,6 +16,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "Lab_Test")
 @Data
+@Builder
 public class LabTest {
 
     @Id

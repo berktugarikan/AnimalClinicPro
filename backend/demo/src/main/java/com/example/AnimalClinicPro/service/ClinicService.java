@@ -1,5 +1,6 @@
 package com.example.AnimalClinicPro.service;
 
+import com.example.AnimalClinicPro.config.PasswordConfig;
 import com.example.AnimalClinicPro.dto.ClinicDto;
 import com.example.AnimalClinicPro.dto.CreateClinicRequest;
 import com.example.AnimalClinicPro.entity.Clinic;
@@ -15,10 +16,13 @@ import java.util.stream.Collectors;
 public class ClinicService {
 
     private final ClinicRepository clinicRepository;
+    private final PasswordConfig passwordConfig;
 
     @Autowired
-    public ClinicService(ClinicRepository clinicRepository) {
+    public ClinicService(ClinicRepository clinicRepository, PasswordConfig passwordConfig) {
+
         this.clinicRepository = clinicRepository;
+        this.passwordConfig = passwordConfig;
     }
 
     public List<ClinicDto> getAllClinics() {
@@ -32,7 +36,7 @@ public class ClinicService {
         return ClinicDto.convert(findClinicById(id));
     }
 
-    protected Clinic findClinicById(Long id) {
+    public Clinic findClinicById(Long id) {
         return clinicRepository.findById(id)
                 .orElseThrow(() -> new ClinicNotFoundException("Clinic not found by id : " + id));
     }
@@ -41,7 +45,7 @@ public class ClinicService {
         return ClinicDto.convert(clinicRepository.findClinicByClinicName(clinicName));
     }
 
-    public void createClinic(CreateClinicRequest request) {
+    public ClinicDto createClinic(CreateClinicRequest request) {
         Clinic clinic = new Clinic();
 
         clinic.setClinicName(request.clinicName());
@@ -51,11 +55,12 @@ public class ClinicService {
         clinic.setAuthorizedName(request.authorizedName());
         clinic.setAuthorizedSurname(request.authorizedSurname());
         clinic.setPhoneNumber(request.phoneNumber());
-        clinic.setPassword(request.password());
+        clinic.setPassword(passwordConfig.passwordEncoder().encode(request.password()));
         clinic.setEmail(request.email());
 
-        clinicRepository.save(clinic);
+        return ClinicDto.convert(clinicRepository.save(clinic));
     }
+
 
     public void deleteClinic(Long id) {
         clinicRepository.deleteById(id);

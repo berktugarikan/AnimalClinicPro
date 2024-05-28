@@ -1,17 +1,19 @@
 package com.example.AnimalClinicPro.service;
 
-import com.example.AnimalClinicPro.dto.AnimalDto;
-import com.example.AnimalClinicPro.dto.AppointmentDto;
-import com.example.AnimalClinicPro.dto.CreateAppointmentRequest;
-import com.example.AnimalClinicPro.dto.UserDto;
+import com.example.AnimalClinicPro.dto.*;
 import com.example.AnimalClinicPro.entity.Appointment;
+import com.example.AnimalClinicPro.entity.User;
 import com.example.AnimalClinicPro.exception.AppointmentNotFoundException;
 import com.example.AnimalClinicPro.repository.AppointmentRepository;
 import com.example.AnimalClinicPro.utils.SqlDateConverter;
 import com.example.AnimalClinicPro.utils.SqlTimeConverter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+
+import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -72,7 +74,18 @@ public class AppointmentService {
     }
 
     public List<AppointmentDto> findAppointmentsByVeterinarianId(Long veterinarianId) {
-        return appointmentRepository.findByVeterinarianId(veterinarianId)
+        User userById = userService.getUserById(veterinarianId);
+        List<User> usersBySameClinic = userService.findUsersBySameClinic(userById.getClinic().getId());
+        List<Appointment> appointments = new ArrayList<>();
+        for (User user : usersBySameClinic) {
+            List<Appointment> userAppointments = appointmentRepository.findByVeterinarianId(user.getId());
+            for (Appointment appointment : userAppointments) {
+                if (!appointments.contains(appointment)) {
+                    appointments.add(appointment);
+                }
+            }
+        }
+        return appointments
                 .stream()
                 .map(this::convert)
                 .collect(Collectors.toList());
@@ -92,7 +105,21 @@ public class AppointmentService {
         appointmentRepository.deleteById(id);
     }
 
-    private AppointmentDto convert(Appointment from) {
+    public List<AppointmentDto> findAppointmentsByCustomerAndStatus(Long customerId, Appointment.AppointmentStatus status) {
+        return appointmentRepository.findByCustomerIdAndStatus(customerId, status)
+                .stream()
+                .map(this::convert)
+                .collect(Collectors.toList());
+    }
+
+    public List<AppointmentDto> findAppointmentsByVeterinarianAndStatus(Long veterinarianId, Appointment.AppointmentStatus status) {
+        return appointmentRepository.findByVeterinarianIdAndStatus(veterinarianId, status)
+                .stream()
+                .map(this::convert)
+                .collect(Collectors.toList());
+    }
+
+    private  AppointmentDto convert(Appointment from) {
         UserDto customerById = userService.findUserById(from.getCustomerId());
         UserDto veterinarianById = userService.findUserById(from.getVeterinarianId());
         return new AppointmentDto(
@@ -105,5 +132,16 @@ public class AppointmentService {
                 from.getStatus().name(),
                 customerById,
                 veterinarianById);
+    }
+
+    private void setAttributeOfAppointmentStatus(UpdateAppointmentRequest updateAppointmentRequest, Appointment appointment) {
+        appointment.setStatus(updateAppointmentRequest.appointmentStatus());
+
+    }
+
+    public AppointmentDto updateAppointmentStatus(Long id, UpdateAppointmentRequest updateAppointmentRequest) {
+        Appointment appointment = findAppointmentById(id);
+        setAttributeOfAppointmentStatus(updateAppointmentRequest, appointment);
+        return convert(appointmentRepository.save(appointment));
     }
 }

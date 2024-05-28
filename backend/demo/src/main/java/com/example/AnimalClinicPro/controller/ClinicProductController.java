@@ -6,6 +6,8 @@ import com.example.AnimalClinicPro.service.ClinicProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/clinic-products")
 public class ClinicProductController {
@@ -17,7 +19,7 @@ public class ClinicProductController {
     }
 
     @PostMapping
-    public ResponseEntity<ClinicProductDto> createClinicProduct(CreateClinicProductRequest request) {
+    public ResponseEntity<ClinicProductDto> createClinicProduct(@RequestBody CreateClinicProductRequest request) {
         return ResponseEntity.ok(clinicProductService.createClinicProduct(request));
     }
 
@@ -40,5 +42,9 @@ public class ClinicProductController {
     @GetMapping("/product-name/{name}")
     public ResponseEntity<ClinicProductDto> getClinicProductByName(@PathVariable String name) {
         return ResponseEntity.ok(clinicProductService.findClinicProductByProductName(name));
+    }
+    @GetMapping("/clinic/{clinicId}")
+    public ResponseEntity<List<ClinicProductDto>> getClinicProductsByClinicId(@PathVariable Long clinicId) {
+        return ResponseEntity.ok(clinicProductService.findClinicProductsByClinic(clinicId));
     }
 }

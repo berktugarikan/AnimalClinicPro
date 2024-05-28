@@ -24,9 +24,6 @@ public class ClinicProduct {
     @Column(name = "Price", nullable = false)
     private Float price;
 
-    @Column(name = "Stock_Quantity", nullable = false)
-    private Integer stockQuantity;
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "Clinic_ID", referencedColumnName = "ID")
     private Clinic clinic;
@@ -37,7 +34,6 @@ public class ClinicProduct {
                 "id=" + id +
                 ", productName='" + productName + '\'' +
                 ", price=" + price +
-                ", stockQuantity=" + stockQuantity +
                 '}';
     }
 
@@ -46,11 +42,11 @@ public class ClinicProduct {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ClinicProduct that = (ClinicProduct) o;
-        return Objects.equals(id, that.id) && Objects.equals(productName, that.productName) && Objects.equals(price, that.price) && Objects.equals(stockQuantity, that.stockQuantity);
+        return Objects.equals(id, that.id) && Objects.equals(productName, that.productName) && Objects.equals(price, that.price);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, productName, price, stockQuantity);
+        return Objects.hash(id, productName, price);
     }
 }

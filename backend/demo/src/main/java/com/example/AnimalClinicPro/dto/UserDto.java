@@ -3,7 +3,7 @@ package com.example.AnimalClinicPro.dto;
 import com.example.AnimalClinicPro.entity.Role;
 import com.example.AnimalClinicPro.entity.User;
 
-import java.util.List;
+
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -32,4 +32,11 @@ public record UserDto(
     public static Set<UserDto> convert(Set<User> users) {
         return users.stream().map(UserDto::convert).collect(Collectors.toSet());
     }
-}
+
+    @Override
+    public Long id() {
+        return id;
+    }
+
+
+    }

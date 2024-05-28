@@ -4,6 +4,9 @@ import com.example.AnimalClinicPro.entity.Appointment;
 import com.example.AnimalClinicPro.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.sql.Date;
+import java.sql.Time;
+import java.util.Collection;
 import java.util.List;
 
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
@@ -12,6 +15,19 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
     // Veterinere göre randevu bulma
     List<Appointment> findByVeterinarianId(Long veterinarianId);
+
+    List<Appointment> findByAppointmentDate(Date appointmentDate);
+
+    List<Appointment> findByAppointmentTime(Time appointmentTime);
+
+    List<Appointment> findByCustomerIdAndStatus(Long customerId, Appointment.AppointmentStatus status);
+
+    List<Appointment> findByVeterinarianIdAndStatus(Long veterinarianId, Appointment.AppointmentStatus status);
+
+
+
+
+
 }
 
 

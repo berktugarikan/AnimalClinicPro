@@ -39,7 +39,6 @@ public class ClinicProductService {
 
         clinicProduct.setProductName(request.productName());
         clinicProduct.setPrice(request.price());
-        clinicProduct.setStockQuantity(request.stockQuantity());
         clinicProduct.setClinic(clinicService.findClinicById(request.clinicId()));
 
         return ClinicProductDto.convert(clinicProductRepository.save(clinicProduct));
@@ -50,7 +49,6 @@ public class ClinicProductService {
 
         clinicProduct.setProductName(request.productName());
         clinicProduct.setPrice(request.price());
-        clinicProduct.setStockQuantity(request.stockQuantity());
         clinicProduct.setClinic(clinicService.findClinicById(request.clinicId()));
 
         return ClinicProductDto.convert(clinicProductRepository.save(clinicProduct));
@@ -60,7 +58,7 @@ public class ClinicProductService {
         return ClinicProductDto.convert(findClinicProductById(id));
     }
 
-    protected ClinicProduct findClinicProductById(Long id) {
+    public ClinicProduct findClinicProductById(Long id) {
         return clinicProductRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Clinic product not found by id : " + id));
     }
@@ -68,5 +66,11 @@ public class ClinicProductService {
     public void deleteClinicProduct(Long id) {
         findClinicProductById(id);
         clinicProductRepository.deleteById(id);
+    }
+    public List<ClinicProductDto> findClinicProductsByClinic(Long clinicId) {
+        return clinicProductRepository.findByClinic_Id(clinicId)
+                .stream()
+                .map(ClinicProductDto::convert)
+                .collect(Collectors.toList());
     }
 }

@@ -2,6 +2,7 @@ package com.example.AnimalClinicPro.controller;
 
 import com.example.AnimalClinicPro.dto.CreateLabTestRequest;
 import com.example.AnimalClinicPro.dto.LabTestDto;
+import com.example.AnimalClinicPro.dto.VaccinationDto;
 import com.example.AnimalClinicPro.service.LabTestService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,5 +48,15 @@ public class LabTestController {
     @GetMapping("/animal/{animalId}")
     public ResponseEntity<List<LabTestDto>> findLabTestsByAnimalId(@PathVariable Long animalId) {
         return ResponseEntity.ok(labTestService.findLabTestsByAnimalId(animalId));
+    }
+
+    @GetMapping("/customer/{customerId}")
+    public ResponseEntity<List<LabTestDto>> getLabTestsByCustomerId(@PathVariable Long customerId) {
+        return ResponseEntity.ok(labTestService.geLabTetsByCustomerId(customerId));
+    }
+
+    @GetMapping("/veterinarian/{veterinarianId}")
+    public ResponseEntity<List<LabTestDto>> findLabTestsByVeterinarianId(@PathVariable Long veterinarianId) {
+        return ResponseEntity.ok(labTestService.findLabTestsByVeterinarianClinic(veterinarianId));
     }
 }

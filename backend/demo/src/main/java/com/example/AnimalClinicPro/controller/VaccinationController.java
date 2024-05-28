@@ -1,7 +1,7 @@
 package com.example.AnimalClinicPro.controller;
 
-import com.example.AnimalClinicPro.dto.CreateVaccinationRequest;
-import com.example.AnimalClinicPro.dto.VaccinationDto;
+import com.example.AnimalClinicPro.dto.*;
+import com.example.AnimalClinicPro.entity.Vaccination;
 import com.example.AnimalClinicPro.service.VaccinationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -52,5 +52,30 @@ public class VaccinationController {
     @GetMapping("/animal/{animalId}")
     public ResponseEntity<List<VaccinationDto>> findVaccinationsByAnimalId(@PathVariable Long animalId) {
         return ResponseEntity.ok(vaccinationService.findVaccinationsByAnimalId(animalId));
+    }
+
+    @GetMapping("/customer/{customerId}")
+    public ResponseEntity<List<VaccinationDto>> getVaccinationsByCustomerId(@PathVariable Long customerId) {
+        return ResponseEntity.ok(vaccinationService.getVaccinationsByCustomerId(customerId));
+    }
+
+    @GetMapping("/clinic/{veterinarianId}")
+    public ResponseEntity<List<VaccinationDto>> getVaccinationsByClinicId(@PathVariable Long veterinarianId) {
+        return ResponseEntity.ok(vaccinationService.findVaccinationsByVeterinarianClinic(veterinarianId));
+    }
+    @GetMapping("/veterinarian/{veterinarianId}/{status}")
+    public ResponseEntity<List<VaccinationDto>> getVaccinationsByVeterinarianAndVaccinationStatus(@PathVariable Long veterinarianId, @PathVariable Vaccination.VaccinationStatus status) {
+        List<VaccinationDto> vaccinations = vaccinationService.findVaccinationsByVeterinarianAndVaccinationStatus(veterinarianId, status);
+        return ResponseEntity.ok(vaccinations);
+    }
+
+    @PutMapping("/status/{id}")
+    public ResponseEntity<VaccinationDto> updateVaccinationStatus(@PathVariable Long id, @RequestBody UpdateVaccinationStatusRequest updateVaccinationStatusRequest){
+        return  ResponseEntity.ok(vaccinationService.updateVaccinationStatus(id, updateVaccinationStatusRequest));
+    }
+    @GetMapping("/customer/{customerId}/{status}")
+    public ResponseEntity<List<VaccinationDto>> getVaccinationsByCustomerAndVaccinationStatus(@PathVariable Long customerId, @PathVariable Vaccination.VaccinationStatus status) {
+        List<VaccinationDto> vaccinations = vaccinationService.findVaccinationsByCustomerAndVaccinationStatus(customerId, status);
+        return ResponseEntity.ok(vaccinations);
     }
 }

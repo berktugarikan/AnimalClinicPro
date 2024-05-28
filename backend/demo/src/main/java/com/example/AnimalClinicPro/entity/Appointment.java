@@ -1,8 +1,10 @@
 package com.example.AnimalClinicPro.entity;
 
 
+import com.example.AnimalClinicPro.dto.UserDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
@@ -17,6 +19,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "Appointment")
 @Data
+@Builder
 public class Appointment {
 
     @Id
@@ -27,6 +30,8 @@ public class Appointment {
     @JoinColumn(name = "Animal_ID", referencedColumnName = "ID")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Animal animal;
+
+   
 
     @Column(name = "Appointment_Date", nullable = false)
     @Temporal(TemporalType.DATE)
@@ -50,6 +55,7 @@ public class Appointment {
     private Long customerId;
     @Column(name = "Veterinarian_ID", nullable = false)
     private Long veterinarianId;
+
 
     @Override
     public String toString() {
