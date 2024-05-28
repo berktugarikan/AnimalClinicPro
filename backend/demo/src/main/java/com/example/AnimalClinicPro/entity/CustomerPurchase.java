@@ -23,16 +23,6 @@ public class CustomerPurchase {
     @JoinColumn(name = "Clinic_Product_ID", referencedColumnName = "ID")
     private ClinicProduct clinicProduct;
 
-    @Column(name = "Purchase_Date", nullable = false)
-    @Temporal(TemporalType.DATE)
-    private java.sql.Date purchaseDate;
-
-    @Column(name = "Quantity", nullable = false)
-    private Integer quantity;
-
-    @Column(name = "Total_Price", nullable = false)
-    private Float totalPrice;
-
     @Column(name = "Payment_Date", nullable = false)
     @Temporal(TemporalType.DATE)
     private java.sql.Date paymentDate;
@@ -43,16 +33,18 @@ public class CustomerPurchase {
     @Column(name = "Payment_Method", nullable = false)
     private String paymentMethod;
 
+    private Long veterinaryId;
+    private Long customerId;
+
     @Override
     public String toString() {
         return "CustomerPurchase{" +
                 "id=" + id +
-                ", purchaseDate=" + purchaseDate +
-                ", quantity=" + quantity +
-                ", totalPrice=" + totalPrice +
                 ", paymentDate=" + paymentDate +
                 ", paymentAmount=" + paymentAmount +
                 ", paymentMethod='" + paymentMethod + '\'' +
+                ", veterinaryId=" + veterinaryId +
+                ", customerId=" + customerId +
                 '}';
     }
 
@@ -61,11 +53,11 @@ public class CustomerPurchase {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CustomerPurchase that = (CustomerPurchase) o;
-        return Objects.equals(id, that.id) && Objects.equals(purchaseDate, that.purchaseDate) && Objects.equals(quantity, that.quantity) && Objects.equals(totalPrice, that.totalPrice) && Objects.equals(paymentDate, that.paymentDate) && Objects.equals(paymentAmount, that.paymentAmount) && Objects.equals(paymentMethod, that.paymentMethod);
+        return Objects.equals(id, that.id) &&  Objects.equals(paymentDate, that.paymentDate) && Objects.equals(paymentAmount, that.paymentAmount) && Objects.equals(paymentMethod, that.paymentMethod) && Objects.equals(veterinaryId, that.veterinaryId) && Objects.equals(customerId, that.customerId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, purchaseDate, quantity, totalPrice, paymentDate, paymentAmount, paymentMethod);
+        return Objects.hash(id, paymentDate, paymentAmount, paymentMethod, veterinaryId, customerId);
     }
 }

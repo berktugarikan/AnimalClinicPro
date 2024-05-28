@@ -15,6 +15,7 @@ import java.util.Set;
     @Data
     @Getter
     @Setter
+    @Builder
     public class User {
 
         @Id
@@ -38,17 +39,20 @@ import java.util.Set;
 
         @Column(name = "Phone_Number", unique = true, nullable = false)
         private String phoneNumber;
+        private Boolean isEnabled = false;
 
         @Column(name = "Role", nullable = false)
         @Enumerated(EnumType.STRING)
         private Role role;
 
+
+        @Setter
         @ManyToOne(fetch = FetchType.EAGER)
         @JoinColumn(name = "Clinic_ID", referencedColumnName = "ID")
         @OnDelete(action = OnDeleteAction.SET_NULL)
         private Clinic clinic;
 
-        @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
         private Set<Animal> animals;
 
     @Override
@@ -60,6 +64,7 @@ import java.util.Set;
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
+                ", isEnabled=" + isEnabled + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", role=" + role +
                 ", clinic=" + clinic +
@@ -71,13 +76,14 @@ import java.util.Set;
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(firstname, user.firstname) && Objects.equals(surname, user.surname) && Objects.equals(username, user.username) && Objects.equals(password, user.password) && Objects.equals(email, user.email) && Objects.equals(phoneNumber, user.phoneNumber) && role == user.role;
+        return Objects.equals(id, user.id) && Objects.equals(firstname, user.firstname) && Objects.equals(surname, user.surname) && Objects.equals(username, user.username) && Objects.equals(password, user.password) && Objects.equals(email, user.email) && Objects.equals(isEnabled, user.isEnabled) && Objects.equals(phoneNumber, user.phoneNumber) && role == user.role;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstname, surname, username, password, email, phoneNumber, role);
+        return Objects.hash(id, firstname, surname, username, password, email, isEnabled, phoneNumber, role);
     }
+
 
 
 }

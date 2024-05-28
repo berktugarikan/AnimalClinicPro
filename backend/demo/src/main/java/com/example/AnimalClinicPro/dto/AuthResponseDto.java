@@ -7,6 +7,9 @@ public record AuthResponseDto(
         String token,
         String role,
         String username,
-        Long userId
+        Long userId,
+        Long clinicId
+
+
 ) {
 }

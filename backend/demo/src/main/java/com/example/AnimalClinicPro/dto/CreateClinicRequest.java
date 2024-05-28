@@ -1,5 +1,8 @@
 package com.example.AnimalClinicPro.dto;
 
+import lombok.Builder;
+
+@Builder
 public record CreateClinicRequest(
     String clinicName,
     String address,

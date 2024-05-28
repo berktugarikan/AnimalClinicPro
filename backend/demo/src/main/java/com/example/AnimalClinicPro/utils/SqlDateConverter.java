@@ -16,4 +16,12 @@ public class SqlDateConverter {
             throw new RuntimeException(e);
         }
     }
+
+    public static String convert(Date date) {
+        if (date == null) {
+            return null;
+        }
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        return format.format(date);
+    }
 }

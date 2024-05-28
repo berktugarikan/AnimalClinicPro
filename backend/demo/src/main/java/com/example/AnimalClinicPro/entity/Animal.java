@@ -68,6 +68,10 @@ public class Animal {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "clinic_ID", referencedColumnName = "ID")
+    private Clinic clinic;
+
     @OneToMany(mappedBy = "animal", cascade = CascadeType.ALL)
     private Set<Vaccination> vaccinations;
 

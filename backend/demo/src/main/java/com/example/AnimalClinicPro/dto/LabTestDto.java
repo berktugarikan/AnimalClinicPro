@@ -1,7 +1,9 @@
 package com.example.AnimalClinicPro.dto;
 
 import com.example.AnimalClinicPro.entity.LabTest;
+import lombok.Builder;
 
+@Builder
 public record LabTestDto(
         Long id,
         String testDate,

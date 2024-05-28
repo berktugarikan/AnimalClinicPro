@@ -11,4 +11,5 @@ public interface ClinicRepository extends JpaRepository<Clinic, Long> {
     Clinic findClinicByCityAndDistrict(String city, String district);
 
     Clinic findClinicByPhoneNumber(String phoneNumber);
+
 }

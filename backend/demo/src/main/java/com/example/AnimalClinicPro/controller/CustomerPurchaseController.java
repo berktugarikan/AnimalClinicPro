@@ -30,4 +30,23 @@ public class CustomerPurchaseController {
         return ResponseEntity.ok(customerPurchaseService.findAll());
     }
 
+    @GetMapping("/customer/{customerId}")
+    public ResponseEntity<List<CustomerPurchaseDto>> findByCustomerId(@PathVariable Long customerId) {
+        return ResponseEntity.ok(customerPurchaseService.findByCustomer(customerId));
+    }
+
+    @GetMapping("/clinic/{veterinaryId}")
+    public ResponseEntity<List<CustomerPurchaseDto>> findByClinic(@PathVariable Long veterinaryId) {
+        return ResponseEntity.ok(customerPurchaseService.findByClinic(veterinaryId));
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity<CustomerPurchaseDto> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(customerPurchaseService.findById(id));
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+        customerPurchaseService.deleteById(id);
+        return ResponseEntity.ok().build();
+    }
 }

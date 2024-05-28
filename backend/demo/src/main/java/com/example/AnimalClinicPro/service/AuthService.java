@@ -38,6 +38,7 @@ public class AuthService {
                     .role(userByUsername.getRole().name())
                     .token(token)
                     .userId(userByUsername.getId())
+                    .clinicId(userByUsername.getClinic().getId()) // Clinic ID'yi ekledik
                     .build();
             return authResponseDto;
         }

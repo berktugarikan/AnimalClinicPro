@@ -1,9 +1,7 @@
 package com.example.AnimalClinicPro.service;
 
-import com.example.AnimalClinicPro.dto.AnimalDto;
-import com.example.AnimalClinicPro.dto.CreateVaccinationRequest;
-import com.example.AnimalClinicPro.dto.UserDto;
-import com.example.AnimalClinicPro.dto.VaccinationDto;
+import com.example.AnimalClinicPro.dto.*;
+import com.example.AnimalClinicPro.entity.Appointment;
 import com.example.AnimalClinicPro.entity.User;
 import com.example.AnimalClinicPro.entity.Vaccination;
 import com.example.AnimalClinicPro.repository.VaccinationRepository;
@@ -11,6 +9,7 @@ import com.example.AnimalClinicPro.utils.SqlDateConverter;
 import com.example.AnimalClinicPro.utils.SqlTimeConverter;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -81,23 +80,70 @@ public class VaccinationService {
         vaccinationRepository.deleteById(id);
     }
 
-    public List<VaccinationDto> findVaccinationsByVeterinarianId(Long id) {;
+    public List<VaccinationDto> findVaccinationsByVeterinarianId(Long id) {
         return vaccinationRepository.findByVeterinarianId(id)
                 .stream()
                 .map(this::convert)
                 .collect(Collectors.toList());
     }
 
-    private VaccinationDto convert(Vaccination vaccination) {
+    public List<VaccinationDto> findVaccinationsByVeterinarianClinic(Long id) {
+        User userById = userService.getUserById(id);
+        List<User> usersBySameClinic = userService.findUsersBySameClinic(userById.getClinic().getId());
+        List<Vaccination> vaccinations = new ArrayList<>();
+        for (User user : usersBySameClinic) {
+            List<Vaccination> userVaccinations = vaccinationRepository.findByVeterinarianId(user.getId());
+            for (Vaccination vaccination : userVaccinations) {
+                if (!vaccinations.contains(vaccination)) {
+                    vaccinations.add(vaccination);
+                }
+            }
+        }
+        return vaccinations
+                .stream()
+                .map(this::convert)
+                .collect(Collectors.toList());
+    }
+
+    public VaccinationDto convert(Vaccination vaccination) {
         User veterinarian = userService.getUserById(vaccination.getVeterinarianId());
         return new VaccinationDto(
                 vaccination.getId(),
                 vaccination.getVaccinationDate().toString(),
-                vaccination.getVaccinationTime(),
-                vaccination.getVaccinationStatus().toString(),
+                vaccination.getVaccinationTime().toString(),
+                vaccination.getVaccinationStatus(),
                 vaccination.getVaccinationDescription(),
                 AnimalDto.convert(vaccination.getAnimal()),
                 UserDto.convert(vaccination.getAnimal().getUser()),
                 UserDto.convert(veterinarian));
+    }
+    public List<VaccinationDto> getVaccinationsByCustomerId(Long customerId) {
+        return vaccinationRepository.findByCustomerId(customerId)
+                .stream()
+                .map(this::convert)
+                .collect(Collectors.toList());
+    }
+    public List<VaccinationDto> findVaccinationsByVeterinarianAndVaccinationStatus(Long veterinarianId, Vaccination.VaccinationStatus vaccinationStatus) {
+        return vaccinationRepository.findByVeterinarianIdAndVaccinationStatus(veterinarianId, vaccinationStatus)
+                .stream()
+                .map(this::convert)
+                .collect(Collectors.toList());
+    }
+
+    private void setAttributeOfVaccinationStatus(UpdateVaccinationStatusRequest updateVaccinationStatusRequest, Vaccination vaccination) {
+        vaccination.setVaccinationStatus(updateVaccinationStatusRequest.vaccinationStatus());
+
+    }
+
+    public VaccinationDto updateVaccinationStatus(Long id, UpdateVaccinationStatusRequest updateVaccinationStatusRequest) {
+        Vaccination vaccination = findVaccinationById(id);
+        setAttributeOfVaccinationStatus(updateVaccinationStatusRequest, vaccination);
+        return convert(vaccinationRepository.save(vaccination));
+    }
+    public List<VaccinationDto> findVaccinationsByCustomerAndVaccinationStatus(Long customerId, Vaccination.VaccinationStatus vaccinationStatus) {
+        return vaccinationRepository.findByCustomerIdAndVaccinationStatus(customerId, vaccinationStatus)
+                .stream()
+                .map(this::convert)
+                .collect(Collectors.toList());
     }
 }

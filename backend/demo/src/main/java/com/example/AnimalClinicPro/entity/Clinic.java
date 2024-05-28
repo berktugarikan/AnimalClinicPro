@@ -1,6 +1,7 @@
 package com.example.AnimalClinicPro.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,7 @@ import java.util.Set;
 @Entity
 @Table(name = "Clinic")
 @Data
+@Builder
 public class Clinic {
 
     @Id

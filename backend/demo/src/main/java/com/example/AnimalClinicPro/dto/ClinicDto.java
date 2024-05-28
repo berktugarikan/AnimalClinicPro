@@ -13,8 +13,8 @@ public record ClinicDto(
     String authorizedName,
     String authorizedSurname,
     String email,
-    String phoneNumber,
-    Set<UserDto> users
+    String phoneNumber
+    //Set<UserDto> users
 ) {
 
     public static ClinicDto convert(Clinic clinic) {
@@ -27,8 +27,8 @@ public record ClinicDto(
             clinic.getAuthorizedName(),
             clinic.getAuthorizedSurname(),
             clinic.getEmail(),
-            clinic.getPhoneNumber(),
-            UserDto.convert(clinic.getUsers())
+            clinic.getPhoneNumber()
+            //UserDto.conver(clinic.getUsers())
         );
     }
 }
