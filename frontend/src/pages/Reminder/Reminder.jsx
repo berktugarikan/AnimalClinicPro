@@ -10,52 +10,96 @@ function Reminder() {
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [error, setError] = useState('');
-    const veterinarianId = localStorage.getItem("userId");
+    const role = localStorage.getItem("role");
+    const userId = localStorage.getItem("userId");
 
-    const fetchAppointments = useCallback(async (status) => {
+    const fetchAppointmentsVeterinarian = useCallback(async (status) => {
         try {
             const token = localStorage.getItem("token");
-            const response = await axios.get(`http://localhost:8080/api/appointments/veterinarian/${veterinarianId}/${status}`, {
+            const response = await axios.get(`http://localhost:8080/api/appointments/veterinarian/${userId}/${status}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            console.log(`Fetched ${status} appointments:`, response.data);
+            console.log(`Fetched ${status} appointments for veterinarian:`, response.data);
             return response.data;
         } catch (error) {
             console.error('Error fetching appointments:', error);
             setError('Failed to fetch appointments. Please try again later.');
             return [];
         }
-    }, [veterinarianId]);
+    }, [userId]);
 
-    const fetchVaccinations = useCallback(async (status) => {
+    const fetchVaccinationsVeterinarian = useCallback(async (status) => {
         try {
             const token = localStorage.getItem("token");
-            const response = await axios.get(`http://localhost:8080/api/vaccinations/veterinarian/${veterinarianId}/${status}`, {
+            const response = await axios.get(`http://localhost:8080/api/vaccinations/veterinarian/${userId}/${status}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            console.log(`Fetched ${status} vaccinations:`, response.data);
+            console.log(`Fetched ${status} vaccinations for veterinarian:`, response.data);
             return response.data;
         } catch (error) {
             console.error('Error fetching vaccinations:', error);
             setError('Failed to fetch vaccinations. Please try again later.');
             return [];
         }
-    }, [veterinarianId]);
+    }, [userId]);
+
+    const fetchAppointmentsCustomer = useCallback(async (status) => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await axios.get(`http://localhost:8080/api/appointments/customer/${userId}/${status}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            console.log(`Fetched ${status} appointments for customer:`, response.data);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching appointments:', error);
+            setError('Failed to fetch appointments. Please try again later.');
+            return [];
+        }
+    }, [userId]);
+
+    const fetchVaccinationsCustomer = useCallback(async (status) => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await axios.get(`http://localhost:8080/api/vaccinations/customer/${userId}/${status}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            console.log(`Fetched ${status} vaccinations for customer:`, response.data);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching vaccinations:', error);
+            setError('Failed to fetch vaccinations. Please try again later.');
+            return [];
+        }
+    }, [userId]);
 
     useEffect(() => {
         const fetchData = async () => {
-            const appointmentsData = await fetchAppointments(status);
-            const vaccinationsData = await fetchVaccinations(status);
+            let appointmentsData = [];
+            let vaccinationsData = [];
+
+            if (role === "ROLE_VETERINARIAN") {
+                appointmentsData = await fetchAppointmentsVeterinarian(status);
+                vaccinationsData = await fetchVaccinationsVeterinarian(status);
+            } else if (role === "ROLE_CUSTOMER") {
+                appointmentsData = await fetchAppointmentsCustomer(status);
+                vaccinationsData = await fetchVaccinationsCustomer(status);
+            }
+
             setAppointments(appointmentsData);
             setVaccinations(vaccinationsData);
         };
 
         fetchData();
-    }, [status, fetchAppointments, fetchVaccinations]);
+    }, [role, status, fetchAppointmentsVeterinarian, fetchVaccinationsVeterinarian, fetchAppointmentsCustomer, fetchVaccinationsCustomer]);
 
     useEffect(() => {
         const allItems = [...appointments, ...vaccinations];
@@ -90,9 +134,14 @@ function Reminder() {
                 }
             });
 
-            // Verileri güncellemek için fetch fonksiyonlarını tekrar çağırıyoruz
-            const appointmentsData = await fetchAppointments(status);
-            const vaccinationsData = await fetchVaccinations(status);
+            // Refresh data
+            const appointmentsData = role === "ROLE_VETERINARIAN"
+                ? await fetchAppointmentsVeterinarian(status)
+                : await fetchAppointmentsCustomer(status);
+            const vaccinationsData = role === "ROLE_VETERINARIAN"
+                ? await fetchVaccinationsVeterinarian(status)
+                : await fetchVaccinationsCustomer(status);
+
             setAppointments(appointmentsData);
             setVaccinations(vaccinationsData);
         } catch (error) {
@@ -195,7 +244,8 @@ function Reminder() {
                             <td>{item.appointmentDescription || item.vaccinationDescription}</td>
                             <td>{item.status || item.vaccinationStatus}</td>
                             <td><div style={{ display: 'flex', gap: '5px' }}>
-                                {getStatusOptions(item.status || item.vaccinationStatus).map((option) => (
+                                {localStorage.getItem("role") === "ROLE_VETERINARIAN" &&
+                                getStatusOptions(item.status || item.vaccinationStatus).map((option) => (
                                     <button
                                         key={option}
                                         style={{ padding: '5px 10px', fontSize: '14px' }}

@@ -7,47 +7,48 @@ import axios from "axios";
 import { Grid } from '@mui/material';
 
 const PetCard = () => {
-    const [petData, setPetData] = useState({});
+    const [petData, setPetData] = useState([]);
     const [selectedPet, setSelectedPet] = useState({});
     const [showModal, setShowModal] = useState(false);
     const [customers, setCustomers] = useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
         const role = localStorage.getItem("role");
 
-  const fetchData = async () => {
-    try {
-      if (role === "ROLE_VETERINARIAN") {
-        const clinicId = localStorage.getItem("clinicId");
-        if (clinicId) {
-          const response = await axios.get(`http://localhost:8080/api/animals/clinic/${clinicId}`);
-          if (response?.data?.length > 0) {
-            const reversedPetData = response.data.reverse();
-            setPetData(reversedPetData);
-          }
-          console.log(response.data);
-        } else {
-          console.error("Clinic ID not found in localStorage");
-        }
-      } else if (role === "ROLE_CUSTOMER") {
-        const userId = localStorage.getItem("userId");
-        if (userId) {
-          const response = await axios.get(`http://localhost:8080/api/animals/owner/${userId}`);
-          if (response?.data?.length > 0) {
-            const reversedPetData = response.data.reverse();
-            setPetData(reversedPetData);
-          }
-          console.log(response.data);
-        } else {
-          console.error("User ID not found in localStorage");
-        }
-      } else {
-        console.error("Undefined role.");
-      }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
+        const fetchData = async () => {
+            try {
+                if (role === "ROLE_VETERINARIAN") {
+                    const clinicId = localStorage.getItem("clinicId");
+                    if (clinicId) {
+                        const response = await axios.get(`http://localhost:8080/api/animals/clinic/${clinicId}`);
+                        if (response?.data?.length > 0) {
+                            const reversedPetData = response.data.reverse();
+                            setPetData(reversedPetData);
+                        }
+                        console.log(response.data);
+                    } else {
+                        console.error("Clinic ID not found in localStorage");
+                    }
+                } else if (role === "ROLE_CUSTOMER") {
+                    const userId = localStorage.getItem("userId");
+                    if (userId) {
+                        const response = await axios.get(`http://localhost:8080/api/animals/owner/customer/${userId}`);
+                        if (response?.data?.length > 0) {
+                            const reversedPetData = response.data.reverse();
+                            setPetData(reversedPetData);
+                        }
+                        console.log(response.data);
+                    } else {
+                        console.error("User ID not found in localStorage");
+                    }
+                } else {
+                    console.error("Undefined role.");
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
 
 
         const fetchCustomerData = async () => {
@@ -112,7 +113,10 @@ const PetCard = () => {
         try {
             const response = await axios.get(`http://localhost:8080/api/animals/${petId}`);
             setSelectedPet(response.data);
-            setUpdateData(response.data);
+            setUpdateData({
+                ...response.data,
+                birthDate: response.data.birthDate ? new Date(new Date(response.data.birthDate).getTime() + (24 * 60 * 60 * 1000)).toISOString().split('T')[0] : ''
+            });
             console.log(response.data);
         } catch (error) {
             console.error('Error fetching user data:', error);
@@ -141,7 +145,7 @@ const PetCard = () => {
                 console.error('Error updating pet:', error);
             });
     };
-
+   
     const getAnimalTypes = useCallback(async () => {
         try {
             const response = await axios.get(`http://localhost:8080/api/animal-types`);
@@ -164,14 +168,31 @@ const PetCard = () => {
         }
     }, []);
 
+    const handleSearchTermChange = (e) => {
+        setSearchTerm(e.target.value);
+    };
 
-   
+    const filteredPetData = petData.filter((pet) => {
+        return (
+            pet.customer.firstname.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            pet.customer.surname.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            pet.customer.username.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+    });
 
-
-    return petData && petData?.length > 0 && (
+    return (
+        
         <div style={{ width: "100%" }}>
+            <h2 style={{ textAlign: "center", marginBottom: "20px" }}>Animal List</h2>
+            <input
+                type="text"
+                placeholder="Search by username"
+                value={searchTerm}
+                onChange={handleSearchTermChange}
+                style={{ marginBottom: "20px", padding: "5px" , maxWidth:"250px", marginTop: "20px"}}
+            />
             <Grid container spacing={2}>
-                {petData?.map((pet) => (
+                {filteredPetData?.map((pet) => (
                     <Grid item xs={12} sm={6} md={4}>
                         <Card key={pet?.id} sx={{
                             margin: '10px',
@@ -184,7 +205,7 @@ const PetCard = () => {
                         }}>
                             <CardContent>
                                 <Typography variant="h6" color="#004d40" gutterBottom>
-                                    Username: {pet?.user?.firstname} - {pet?.user?.surname}
+                                    Username: {`${pet?.customer?.firstname} ${pet?.customer?.surname}`} ({pet?.customer?.username})
                                 </Typography>
                                 <Typography variant="h6" color="#004d40" gutterBottom>
                                     Pet Name: {pet?.name}
@@ -194,7 +215,7 @@ const PetCard = () => {
                                 </Typography>
                             </CardContent>
                             <CardActions>
-                                <button style={{ color: '#ffffff', backgroundColor: '#6c9286', borderRadius: '10px', border: "1px", borderColor: "white", padding: "5px 10px 5px 10px" }}
+                                <button style={{ color: '#ffffff', backgroundColor: '#6c9286', borderRadius: '10px', border: "1                                px", borderColor: "white", padding: "5px 10px 5px 10px" }}
                                     onClick={() => handleChoose(pet)}>Choose
                                 </button>
                             </CardActions>
@@ -334,3 +355,4 @@ const PetCard = () => {
 };
 
 export default PetCard;
+

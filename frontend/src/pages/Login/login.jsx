@@ -39,7 +39,7 @@ export function Login() {
       if (role === "ROLE_VETERINARIAN") {
         navigate("/vetmainpage");
       } else if (role === "ROLE_CUSTOMER") {
-        navigate("/vetmainpage");
+        navigate("/reminder");
       } else if(role === "ROLE_ADMIN"){
         navigate("/admin")
       }

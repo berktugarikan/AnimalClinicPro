@@ -35,37 +35,20 @@ function VetGenelArgAdd() {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        if (name === 'vaccinationTime') {
-            const selectedTimeInMinutes = timeInMinutes(value);
-            const selectedDaysAppointments = appointments.filter((appointment) => appointment.vaccinationDate === result.vaccinationDate)
-            var available = true;
-            selectedDaysAppointments.forEach((app) => {
-                const appStartTimeInMin = timeInMinutes(app.vaccinationTime);
-                const appEndTimeInMin = timeInMinutes(app.vaccinationTime) + 60;
 
-                if (appStartTimeInMin <= selectedTimeInMinutes && selectedTimeInMinutes < appEndTimeInMin) {
-                    available = false;
-                }
-            })
-            if (!available) { return toast.error("Time not Available!") };
+        if (name === 'vaccinationDate') {
             setNewResult((prevData) => ({
                 ...prevData,
-                [name]: value + ':00',
+                vaccinationTime: '',
+                [name]: value
             }));
         } else {
-            if (name === 'vaccinationDate') {
-                setNewResult((prevData) => ({
-                    ...prevData,
-                    vaccinationTime: '',
-                    [name]: value
-                }));
-            } else {
-                setNewResult((prevData) => ({
-                    ...prevData,
-                    [name]: value,
-                }));
-            }
+            setNewResult((prevData) => ({
+                ...prevData,
+                [name]: value,
+            }));
         }
+
     };
 
     const handleCreateResult = async () => {
@@ -239,39 +222,38 @@ function VetGenelArgAdd() {
 
     const [timeOptions, setTimeOptions] = useState([]);
     const updateTimeOptions = () => {
-    const options = [];
-    for (let hour = 9; hour < 18; hour++) {
-        for (let minute = 0; minute <= 40; minute += 20) {
-            const formattedTime = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:00`;
-            let exists = false;
-            if (formattedTime) {
-                filteredVaccinationHistory.forEach((history) => {
-                    if (formattedTime === history.vaccinationTime) {
-                        exists = true;
-                    }
-                });
-                filteredAppointmentHistory.forEach((history) => {
-                    if (formattedTime === history.appointmentTime) {
-                        exists = true;
-                    }
-                });
+        setTimeOptions([]);
+        // console.log("updateTimeOptions called");
+        // console.log("updateTimeOptions timeOptions:", timeOptions);
+        // console.log("UpdateTimeOptions filteredVaccinationHistory[0].vaccinationTime: ",filteredVaccinationHistory[0]?.vaccinationTime)
+        for (let hour = 9; hour < 18; hour++) {
+            for (let minute = 0; minute <= 40; minute += 20) {
+                const formattedTime = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:00`;
+                let exists = false;
+                if (formattedTime) {
+                    filteredVaccinationHistory.forEach((history) => {
+                        if (formattedTime === history.vaccinationTime) {
+                            exists = true;
+                        }
+                    })
+                    filteredAppointmentHistory.forEach((history) => {
+                        if (formattedTime === history.appointmentTime) {
+                            exists = true;
+                        }
+                    })
 
-                if (!exists) {
-                    options.push(formattedTime);
+                    if (!exists) {
+                        // timeOptions.push(formattedTime);
+                        setTimeOptions((prev) => [...prev, formattedTime])
+                    }
                 }
             }
         }
     }
-    setTimeOptions(options);
-};
-
 
     useEffect(() => {
         updateTimeOptions()
     }, [filteredVaccinationHistory, filteredAppointmentHistory])
-
-
-
 
     return (
         <div style={{ display: 'flex', width: '100%' }}>
@@ -282,7 +264,7 @@ function VetGenelArgAdd() {
                     <form>
                         <div className="mb-3">
                             <label htmlFor="Veterenerian" className="form-label">Veterenerian</label>
-                            <select value={result.veterinarianId} name='veterinarianId' onChange={handleChangeVeterenerian}>
+                            <select value={result.veterinarianId} name='veterinarianId' onChange={handleChangeVeterenerian} defaultValue={localStorage.getItem("userId")}>
                                 {veterinarians.map((item, index) => (
                                     <option key={index} value={item.id}>{item.firstname} {item.surname}</option>
                                 ))}
@@ -292,12 +274,12 @@ function VetGenelArgAdd() {
                             <label htmlFor="Customer" className="form-label">Customer</label>
                             <select value={result.customerId} name='customerId' onChange={handleChangeCustomer}>
                                 {customers.map((item, index) => (
-                                    <option key={index} value={item.id}>{item.firstname} {item.surname} - ({item.username})</option>
+                                    <option key={index} value={item.id}>{item.firstname} {item.surname}</option>
                                 ))}
                             </select>
                         </div>
                         <div className="mb-3">
-                            <label htmlFor="Animal" className="form-label">Animal</label>
+                            <label htmlFor="" className="form-label">Animal</label>
                             <select value={result.animalId} name='animalId' onChange={handleChangeAnimal}>
                                 {animals.map((item, index) => (
                                     <option key={index} value={item.id}>{item.name} - ({item.type})</option>
@@ -313,12 +295,18 @@ function VetGenelArgAdd() {
                             </select>
                         </div>
                         <div className="mb-3">
-                            <label htmlFor="Appointment_Date" className="form-label">Vaccine Date</label>
+                            <label htmlFor="Appointment_Date" className="form-label">Vaccination Date</label>
                             <input type="date" className="form-control" id="Appointment_Date" name="vaccinationDate"
                                 value={result.vaccinationDate} onChange={handleInputChange} min={today} required />
                         </div>
+                        {/* <div className="mb-3">
+                            <label htmlFor="Appointment_Time" className="form-label">Appointment Time</label>
+                            <input type="time" className="form-control" id="Appointment_Time" name="vaccinationTime"
+                                value={result.vaccinationTime} onChange={handleInputChange} required />
+                        </div> */}
+
                         <div className="mb-3">
-                            <label htmlFor="Appointment_Time" className="form-label">Vaccine Time</label>
+                            <label htmlFor="Appointment_Time" className="form-label">Appointment Time</label>
                             <select value={result.vaccinationTime} name="vaccinationTime" id="Appointment_Time" onChange={handleInputChange}>
                                 <option value="">Select Time</option>
                                 {timeOptions?.map((time, index) => (
