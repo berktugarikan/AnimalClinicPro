@@ -18,7 +18,7 @@ const pastAppointmentsStyle ={
 function VetGenelAR() {
   return (
     <div>
-      <h1>Veterinary Appointments History</h1>
+      <h1>Appointments History</h1>
       <div style={containerStyle}>
         {/* <SelectionBar style={selectionBarStyle} /> */}
         <PastAppointments style ={pastAppointmentsStyle} />

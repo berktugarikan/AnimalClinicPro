@@ -12,13 +12,15 @@ const PetCard = () => {
     const [showModal, setShowModal] = useState(false);
     const [customers, setCustomers] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
+    const [role, setRole] = useState(""); // role değişkeni tanımlandı
 
     useEffect(() => {
-        const role = localStorage.getItem("role");
+        const userRole = localStorage.getItem("role"); // local storage'dan role alınıyor
+        setRole(userRole); // role değişkeni güncelleniyor
 
         const fetchData = async () => {
             try {
-                if (role === "ROLE_VETERINARIAN") {
+                if (userRole === "ROLE_VETERINARIAN") {
                     const clinicId = localStorage.getItem("clinicId");
                     if (clinicId) {
                         const response = await axios.get(`http://localhost:8080/api/animals/clinic/${clinicId}`);
@@ -30,7 +32,7 @@ const PetCard = () => {
                     } else {
                         console.error("Clinic ID not found in localStorage");
                     }
-                } else if (role === "ROLE_CUSTOMER") {
+                } else if (userRole === "ROLE_CUSTOMER") {
                     const userId = localStorage.getItem("userId");
                     if (userId) {
                         const response = await axios.get(`http://localhost:8080/api/animals/owner/customer/${userId}`);
@@ -90,7 +92,7 @@ const PetCard = () => {
         length: "",
         weight: "",
         chipNumber: ""
-       
+
         // Diğer gerekli alanları buraya ekleyebilirsiniz
     });
 
@@ -133,7 +135,7 @@ const PetCard = () => {
 
     const updatePet = async () => {
         const { id, ...updatedPet } = updateData;
-       
+
         await axios.put(`http://localhost:8080/api/animals/${selectedPet.id}`, updatedPet)
             .then(response => {
                 if (response.status === 200) {
@@ -145,7 +147,7 @@ const PetCard = () => {
                 console.error('Error updating pet:', error);
             });
     };
-   
+
     const getAnimalTypes = useCallback(async () => {
         try {
             const response = await axios.get(`http://localhost:8080/api/animal-types`);
@@ -181,7 +183,7 @@ const PetCard = () => {
     });
 
     return (
-        
+
         <div style={{ width: "100%" }}>
             <h2 style={{ textAlign: "center", marginBottom: "20px" }}>Animal List</h2>
             <input
@@ -189,7 +191,7 @@ const PetCard = () => {
                 placeholder="Search by username"
                 value={searchTerm}
                 onChange={handleSearchTermChange}
-                style={{ marginBottom: "20px", padding: "5px" , maxWidth:"250px", marginTop: "20px"}}
+                style={{ marginBottom: "20px", padding: "5px", maxWidth: "250px", marginTop: "20px" }}
             />
             <Grid container spacing={2}>
                 {filteredPetData?.map((pet) => (
@@ -215,9 +217,11 @@ const PetCard = () => {
                                 </Typography>
                             </CardContent>
                             <CardActions>
-                                <button style={{ color: '#ffffff', backgroundColor: '#6c9286', borderRadius: '10px', border: "1                                px", borderColor: "white", padding: "5px 10px 5px 10px" }}
-                                    onClick={() => handleChoose(pet)}>Choose
-                                </button>
+                                {
+                                    <button style={{ color: '#ffffff', backgroundColor: '#6c9286', borderRadius: '10px', border: "1px", borderColor: "white", padding: "5px 10px 5px 10px" }}
+                                        onClick={() => handleChoose(pet)}>Choose
+                                    </button>
+                                }
                             </CardActions>
                         </Card>
                     </Grid>
@@ -342,7 +346,9 @@ const PetCard = () => {
                                 )}
                             </div>
                             <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" onClick={updatePet}>Update</button>
+                                {role !== "ROLE_CUSTOMER" && (
+                                    <button type="button" className="btn btn-secondary" onClick={updatePet}>Update</button>
+                                )}
                                 <button type="button" className="btn btn-secondary" onClick={closeModal}>Close</button>
                             </div>
                         </div>
@@ -355,4 +361,3 @@ const PetCard = () => {
 };
 
 export default PetCard;
-

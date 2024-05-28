@@ -10,6 +10,9 @@ const SelectionBar = () => {
   const [selectedPage, setSelectedPage] = React.useState();
   const navigate = useNavigate();
 
+  const role = localStorage.getItem('role');
+  const isAdmin = role === 'ROLE_ADMIN';
+
   const pages = [
     { name: 'Patient Admission', path: '/vetgenelhastakabul' },
     { name: 'Appointments', path: '/addAppointment' },
@@ -20,19 +23,24 @@ const SelectionBar = () => {
     { name: 'Laboratory Result Add', path: '/addLabResult' },
     { name: 'Payment', path: '/payment' },
     { name: 'Payment History', path: '/vetgenelödemegeçmişi' },
-    {name: 'Clinic Product', path: '/clinicproduct'},
-    {name: 'Reminder', path: '/reminder'}
+    { name: 'Clinic Product', path: '/clinicproduct' },
+    { name: 'Reminder', path: '/reminder' }
   ];
 
   // Eğer kullanıcı ROLE_CUSTOMER ise ve sayfa ROLE_CUSTOMER için engellenmişse, pages dizisinden kaldır
   if (localStorage.getItem('role') === 'ROLE_CUSTOMER') {
-    const forbiddenPages = ['/vetgenelhastakabul', '/addAppointment', '/vetgenelargadd', '/addLabResult', '/payment', '/clinicproduct', '/vetgenelargadd'];
+    const forbiddenPages = ['/vetgenelhastakabul', '/vetgenelargadd', '/addLabResult', '/payment', '/clinicproduct', '/vetgenelargadd'];
     forbiddenPages.forEach(forbiddenPage => {
       const index = pages.findIndex(page => page.path === forbiddenPage);
       if (index !== -1) {
         pages.splice(index, 1);
       }
     });
+  }
+
+  // Eğer kullanıcı ROLE_ADMIN ise, tüm sayfaları kaldır
+  if (isAdmin) {
+    pages.splice(0, pages.length);
   }
 
   const handlePageClick = (page) => {

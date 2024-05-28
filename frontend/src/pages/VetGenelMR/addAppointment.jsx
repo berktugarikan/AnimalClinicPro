@@ -30,28 +30,50 @@ export function AddAppointment() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const clinicId = localStorage.getItem("clinicId"); // Local storage'dan clinic ID'yi al
-                const customerResponse = await axios.get("http://localhost:8080/api/users/customers", {
-                    params: {
-                        clinicId: clinicId // Clinic ID'yi query parametresi olarak ekle
+                const role = localStorage.getItem('role');
+                const clinicId = localStorage.getItem("clinicId");
+                
+                if(role === 'ROLE_VETERINARIAN') {
+                    const vetResponse = await axios.get(`http://localhost:8080/api/users/${localStorage.getItem("userId")}`);
+                    setVeterinarian([vetResponse.data]);
+                    if (vetResponse.data) {
+                        setFormData((prevData) => ({
+                            ...prevData,
+                            veterinarianId: vetResponse.data.id
+                        }));
                     }
-                });
-                setCustomer(customerResponse.data);
-                if (customerResponse.data.length > 0) {
-                    setFormData((prevData) => ({
-                        ...prevData,
-                        customerId: customerResponse.data[0].id
-                    }));
+                    const customerResponse = await axios.get("http://localhost:8080/api/users/customers", {
+                        params: {
+                            clinicId: clinicId
+                        }
+                    });
+                    setCustomer(customerResponse.data);
+                    if (customerResponse.data.length > 0) {
+                        setFormData((prevData) => ({
+                            ...prevData,
+                            customerId: customerResponse.data[0].id
+                        }));
+                    }
+                } else if (role === 'ROLE_CUSTOMER') {
+                    const customerResponse = await axios.get(`http://localhost:8080/api/users/${localStorage.getItem("userId")}`);
+                    setCustomer([customerResponse.data]);
+                    if (customerResponse.data) {
+                        setFormData((prevData) => ({
+                            ...prevData,
+                            customerId: customerResponse.data.id
+                        }));
+                    }
+                    const vetResponse = await axios.get(`http://localhost:8080/api/users/clinic/${clinicId}/vets`);
+                    setVeterinarian(vetResponse.data);
+                    if (vetResponse.data.length > 0) {
+                        setFormData((prevData) => ({
+                            ...prevData,
+                            veterinarianId: vetResponse.data[0].id
+                        }));
+                    }                  
+                
                 }
 
-                const vetResponse = await axios.get(`http://localhost:8080/api/users/${localStorage.getItem("userId")}`);
-                setVeterinarian([vetResponse.data]);
-                if (vetResponse.data) {
-                    setFormData((prevData) => ({
-                        ...prevData,
-                        veterinarianId: vetResponse.data.id
-                    }));
-                }
             } catch (error) {
                 console.log(error);
             }
@@ -128,13 +150,14 @@ export function AddAppointment() {
             animalId: animalId
         }));
     };
-
+    const role = localStorage.getItem('role');
     const handleSubmit = async (e) => {
         e.preventDefault();
         axios.post('http://localhost:8080/api/appointments', formData)
             .then(response => {
                 if (response.status === 200) {
-                    navigate("/vetmainpage")
+                    
+                    navigate("/vetgenelmrg")
                 }
             })
             .catch(error => {
@@ -292,7 +315,12 @@ export function AddAppointment() {
                         <div className="mb-3">
                             <label htmlFor="status" className="form-label">Status</label>
                             <select value={formData.appointmentStatus} name='appointmentStatus' onChange={handleChange}>
-                                {statues.map((status, index) => (
+                                {/* ROLE_CUSTOMER ise sadece 'PENDING' seçeneği gösterilir */}
+                                {role === 'ROLE_CUSTOMER' && (
+                                    <option value="PENDING">PENDING</option>
+                                )}
+                                {/* Diğer roller için tüm durumlar gösterilir */}
+                                {role !== 'ROLE_CUSTOMER' && statues.map((status, index) => (
                                     <option key={index} value={status}>{status}</option>
                                 ))}
                             </select>

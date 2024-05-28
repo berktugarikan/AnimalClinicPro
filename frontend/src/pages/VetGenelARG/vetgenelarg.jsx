@@ -17,7 +17,7 @@ const pastVaccineAppointmentsStyle ={
 function VetGenelARG() {
   return (
     <div>
-      <h1>Veterinary Vaccine Appointments History</h1>
+      <h1>Vaccine History</h1>
       <div style={containerStyle}>
 
         <PastVaccineAppointments style ={pastVaccineAppointmentsStyle} />

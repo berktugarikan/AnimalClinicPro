@@ -9,12 +9,12 @@ export function AdminPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const role = localStorage.getItem('role'); // Rolü local storage'dan al
+    const role = localStorage.getItem('role');
     if (role !== 'ROLE_ADMIN') {
       alert('Access Denied');
-      navigate('/vetmainpage'); // Erişim engellendiğinde ana sayfaya yönlendir
+      navigate('/vetmainpage');
     } else {
-      getUsers(); // Rolü admin ise kullanıcıları getir
+      getUsers();
     }
   }, []);
 
@@ -68,9 +68,39 @@ export function AdminPage() {
     }
   };
 
+  const deleteUser = async (userId, username) => {
+    if (window.confirm("Are you sure you want to delete this user?")) {
+      try {
+        const token = localStorage.getItem("token");
+        await axios.delete(
+          `http://localhost:8080/api/users/${userId}`,
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          }
+        );
+        getUsers();
+      } catch (error) {
+        console.error("Error deleting user:", error);
+      }
+    }
+  };
+
+  const navigateToCreateUser = () => {
+    navigate('/createuser');
+  };
+
   return (
     <div className="container">
       <h1 className="text-center">Admin Page</h1>
+      <div className="row mb-3">
+        <div className="col">
+          <button className="btn btn-primary" onClick={navigateToCreateUser}>
+            CreateUser
+          </button>
+        </div>
+      </div>
       <div className="row">
         <div className="col">
           {loading ? (
@@ -97,10 +127,16 @@ export function AdminPage() {
                         Upgrade Role
                       </button>
                       <button
-                        className="btn btn-warning"
+                        className="btn btn-secondary me-2"
                         onClick={() => updateUserRole(user.username, 'ROLE_CUSTOMER')}
                       >
                         Downgrade Role
+                      </button>
+                      <button
+                        className="btn btn-danger"
+                        onClick={() => deleteUser(user.id, user.username)}
+                      >
+                        Delete
                       </button>
                     </td>
                   </tr>
